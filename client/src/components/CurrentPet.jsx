@@ -1,4 +1,3 @@
-import { useEffect } from "react";
 import { useAuth, useCurrentPet } from "../hooks/useStore";
 
 const CurrentPet = () => {
@@ -9,10 +8,6 @@ const CurrentPet = () => {
     setCurrentPetId(e.target.value);
     localStorage.setItem("currentPetId", e.target.value);
   };
-
-  // useEffect(() => {
-  //   console.log(currentPetId);
-  // }, [currentPetId]);
 
   return (
     <div className="rounded-lg overflow-hidden h-8 w-52 drop-shadow-lg">

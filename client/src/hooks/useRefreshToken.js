@@ -12,13 +12,11 @@ const useRefreshToken = () => {
       baseURL: BASE_URL,
       withCredentials: true,
     });
-
-    const data = {
+    auth.setAuth({
       accessToken: response.data.accessToken,
       user: response.data.user,
-    };
-
-    return auth.setAuth(data);
+    });
+    return response.data.accessToken;
   };
 
   return refresh;

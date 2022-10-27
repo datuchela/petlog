@@ -10,8 +10,7 @@ const useStore = create((set) => ({
       })),
   },
   currentPet: {
-    currentPetId:
-      localStorage.getItem("currentPetId") || auth.user?.pets[0]?.id,
+    currentPetId: localStorage.getItem("currentPetId") || "",
     setCurrentPetId: (id) =>
       set((state) => ({
         currentPet: { ...state.currentPet, currentPetId: id },
