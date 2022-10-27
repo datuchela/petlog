@@ -1,9 +1,5 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
-// // Context Providers
-// import { AuthProvider } from "./context/AuthProvider";
-// import { PetsProvider } from "./context/PetsProvider";
-
 // Routes
 import Layout from "./components/Layout";
 import Home from "./routes/Home";
