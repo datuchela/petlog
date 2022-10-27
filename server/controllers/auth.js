@@ -1,0 +1,171 @@
+const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
+const cookie = require("cookie");
+const { db } = require("../db");
+
+const asyncWrapper = require("../middleware/asyncWrapper");
+
+const authenticate = asyncWrapper(async (req, res) => {
+  if (!req.body || !req.body.usernameOrEmail || !req.body.password) {
+    return res.status(400).json({ status: 400, msg: "Some values are empty." });
+  }
+
+  // finds an user in db with username or email
+  const user =
+    (await db.user.findUnique({
+      where: {
+        username: req.body.usernameOrEmail,
+      },
+      include: {
+        pets: true,
+      },
+    })) ||
+    (await db.user.findUnique({
+      where: {
+        email: req.body.usernameOrEmail,
+      },
+      include: {
+        pets: true,
+      },
+    }));
+
+  if (!user) {
+    return res.status(404).json({ status: 404, msg: "User not found." });
+  }
+
+  const validPassword = await bcrypt.compare(req.body.password, user.password);
+  if (!validPassword) {
+    return res.status(401).json({ status: 401, msg: "Invalid Credentials" });
+  }
+
+  // TODO: use .env file for secrets
+  const accessToken = jwt.sign(
+    { id: user.id, username: user.username },
+    process.env.ACCESS_TOKEN_SECRET,
+    {
+      expiresIn: "15m",
+    }
+  );
+
+  const refreshToken = jwt.sign(
+    { id: user.id, username: user.username },
+    process.env.REFRESH_TOKEN_SECRET,
+    {
+      expiresIn: "30m",
+    }
+  );
+
+  await db.refreshToken.create({
+    data: {
+      token: refreshToken,
+      userId: user.id,
+    },
+  });
+
+  const { password, ...userWithoutPassword } = user;
+
+  // res.setHeader(
+  //   "Set-Cookie",
+  //   cookie.serialize("refreshToken", refreshToken, {
+  //     httpOnly: true,
+  //     secure: true,
+  //     sameSite: true,
+  //     maxAge: 2592000000,
+  //     path: "/",
+  //   })
+  // );
+
+  res.cookie("refreshToken", refreshToken, {
+    httpOnly: true,
+    secure: true,
+    sameSite: true,
+    maxAge: 2592000000,
+    path: "/",
+  });
+
+  return res.status(200).json({
+    status: 200,
+    user: userWithoutPassword,
+    accessToken: accessToken,
+  });
+});
+
+const refreshToken = asyncWrapper(async (req, res) => {
+  if (!req.headers.cookie) {
+    return res
+      .status(400)
+      .json({ status: 400, logOut: true, msg: "Must provide refresh token" });
+  }
+  const { refreshToken } = cookie.parse(req.headers.cookie);
+
+  const validRefreshToken = await db.refreshToken.findUnique({
+    where: {
+      token: refreshToken,
+    },
+  });
+  if (!validRefreshToken) {
+    res.clearCookie("refreshToken");
+    return res
+      .status(400)
+      .json({ status: 400, logOut: true, msg: "invalid refresh token" });
+  }
+  try {
+    const user = jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET);
+    const userFromDatabase = await db.user.findUnique({
+      where: { id: user.id },
+      include: {
+        pets: true,
+        reminders: true,
+      },
+    });
+    const { password, ...userWithoutPassword } = userFromDatabase;
+    const accessToken = jwt.sign(
+      { id: userFromDatabase.id, username: userFromDatabase.username },
+      process.env.ACCESS_TOKEN_SECRET,
+      {
+        expiresIn: "15m",
+      }
+    );
+    return res.status(200).json({
+      status: 200,
+      user: userWithoutPassword,
+      accessToken: accessToken,
+    });
+  } catch (error) {
+    console.error(error);
+    await db.refreshToken.delete({
+      where: {
+        token: refreshToken,
+      },
+    });
+    res.clearCookie("refreshToken");
+    return res
+      .status(400)
+      .json({ status: 400, logOut: true, msg: error.message });
+  }
+});
+
+const logOut = asyncWrapper(async (req, res) => {
+  if (!req.headers.cookie) {
+    return res
+      .status(401)
+      .json({ status: 401, msg: "Must provide refresh token to logout" });
+  }
+  const { refreshToken } = cookie.parse(req.headers.cookie);
+  try {
+    await db.refreshToken.delete({
+      where: {
+        token: refreshToken,
+      },
+    });
+    res.clearCookie("refreshToken");
+    return res.status(200).json({ status: 200, msg: "logged out" });
+  } catch (error) {
+    console.log(error.message);
+    return res
+      .status(500)
+      .json({ status: 500, msg: "Something went wrong on the server." });
+  }
+});
+
+module.exports = { authenticate, refreshToken, logOut };

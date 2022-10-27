@@ -1,0 +1,67 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+
+model User {
+  id Int @id @default(autoincrement())
+  username String @unique
+  email String @unique
+  password String
+  isAdmin Boolean @default(false)
+  pets Pet[]
+  reminders Reminder[]
+  refreshTokens RefreshToken[]
+}
+
+model RefreshToken {
+  token String @unique
+  user User @relation(fields: [userId], references: [id])
+  userId Int
+}
+
+
+// model Names{
+//   name String @id @unique
+//   count Int @default(1)
+// }
+
+model Reminder {
+  id Int @id @default(autoincrement())
+  name String
+  upcoming String
+  intervalValue Int
+  intervalType String
+  pet Pet @relation(fields: [petId], references: [id])
+  petId Int
+  user User @relation(fields: [userId], references: [id])
+  userId Int
+}
+
+model Pet {
+  id    Int     @id @default(autoincrement())
+  name  String
+  gender String 
+  birthday String
+  weight String?
+  reminders Reminder[]
+  owner User @relation(fields: [ownerId], references: [id])
+  ownerId Int
+  species Species @relation(fields: [speciesId], references: [id])
+  speciesId Int
+}
+
+
+model Species {
+  id Int @id @default(autoincrement())
+  name String
+  pets Pet[]
+}
