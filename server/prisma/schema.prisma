@@ -40,9 +40,9 @@ model Reminder {
   upcoming String
   intervalValue Int
   intervalType String
-  pet Pet @relation(fields: [petId], references: [id])
+  pet Pet @relation(fields: [petId], references: [id], onDelete: Cascade)
   petId Int
-  user User @relation(fields: [userId], references: [id])
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId Int
 }
 
@@ -53,9 +53,9 @@ model Pet {
   birthday String
   weight String?
   reminders Reminder[]
-  owner User @relation(fields: [ownerId], references: [id])
+  owner User @relation(fields: [ownerId], references: [id], onDelete: Cascade)
   ownerId Int
-  species Species @relation(fields: [speciesId], references: [id])
+  species Species @relation(fields: [speciesId], references: [id], onDelete: Cascade)
   speciesId Int
 }
 
