@@ -5,3 +5,4 @@
 3. [ ] Change-up design
 4. [ ] Show error messages in form
 5. [x] Consider using Zustand as state manager (or something else)
+6. [ ] Make client state always up-to-date as well as bug-free !!!!important
