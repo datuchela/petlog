@@ -95,8 +95,8 @@ const deletePet = asyncWrapper(async (req, res) => {
     });
 
     return res
-      .status(204)
-      .json({ status: 204, msg: "Pet has been deleted successfully." });
+      .status(200)
+      .json({ status: 200, msg: "Pet has been deleted successfully." });
   } catch (error) {
     console.log(error);
     console.log("userId: ", userId);

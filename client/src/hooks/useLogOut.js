@@ -1,4 +1,4 @@
-import { axiosPrivate } from "../configs/axios";
+import { axiosPrivate } from "../api/methods";
 import { useAuth } from "./useStore";
 
 const useLogOut = () => {
