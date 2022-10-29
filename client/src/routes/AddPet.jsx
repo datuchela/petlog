@@ -1,6 +1,7 @@
 import { useLayoutEffect, useState, useEffect } from "react";
 import useForm from "../hooks/useForm";
 import useAxiosPrivate from "../hooks/useAxiosPrivate";
+import { usePets } from "../hooks/useStore";
 
 // UI Components
 import { Link } from "react-router-dom";
@@ -10,6 +11,7 @@ import Radio from "../components/Radio";
 import DateInput from "../components/DateInput";
 
 export default function AddPet() {
+  const { setPets } = usePets();
   const axiosPrivate = useAxiosPrivate();
   const [species, setSpecies] = useState([]);
   const [emoji, setEmoji] = useState({ name: "", weight: "" });
@@ -20,7 +22,7 @@ export default function AddPet() {
     weight: "",
     speciesId: "",
   });
-  const [pet, setPet] = useState();
+  const [status, setStatus] = useState();
 
   // current date for calendar validations
   const date = new Date();
@@ -34,7 +36,10 @@ export default function AddPet() {
         JSON.stringify(form)
       );
       console.log(response.data);
-      if (response.data.status === 201) setPet(response.data.pet);
+      if (response.data.status === 201) {
+        setStatus(response.data.status);
+        setPets(response.data.pet);
+      }
     } catch (error) {
       console.log(error);
     }
@@ -70,10 +75,10 @@ export default function AddPet() {
   }, []);
   // end of side-effects
 
-  // DEBUGGING PURPOSES ONLY
-  useEffect(() => {
-    console.log(form);
-  }, [form]);
+  // // DEBUGGING PURPOSES ONLY
+  // useEffect(() => {
+  //   console.log(form);
+  // }, [form]);
 
   useEffect(() => {
     if (form?.speciesId === "1") {
@@ -85,13 +90,13 @@ export default function AddPet() {
     console.log("emoji: ", emoji);
   }, [form?.speciesId]);
 
-  if (pet) {
+  if (status === 201) {
     return (
       <>
         <h1 className="text-4xl font-semibold text-gray-800">✅ All Done!</h1>
         <h2 className="text-3xl text-gray-800">
-          {pet.speciesId === 1 ? "🐶" : "🐱"}
-          {pet.name} has been added successfully!
+          {form.speciesId === "1" ? "🐶" : "🐱"}
+          {form.name} has been added successfully!
         </h2>
         <Link
           className="font-medium text-gray-600 hover:text-gray-900 w-fit"

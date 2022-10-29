@@ -1,7 +1,7 @@
 import { useEffect, useState, useLayoutEffect } from "react";
 import useForm from "../hooks/useForm";
 import useAxiosPrivate from "../hooks/useAxiosPrivate";
-import { useAuth, useCurrentPet } from "../hooks/useStore";
+import { useCurrentPet, usePets } from "../hooks/useStore";
 
 // UI Components
 import { Link, useNavigate, useLocation } from "react-router-dom";
@@ -10,7 +10,7 @@ import Input from "../components/Input";
 import DateInput from "../components/DateInput";
 
 export default function AddReminder() {
-  const auth = useAuth();
+  const { pets } = usePets();
   const { currentPetId } = useCurrentPet();
   const axiosPrivate = useAxiosPrivate();
   const [form, handleChange, setForm] = useForm({
@@ -51,9 +51,7 @@ export default function AddReminder() {
   }, [currentPetId]);
 
   useEffect(() => {
-    const currentPet = auth.user.pets?.filter(
-      (pet) => pet.id == currentPetId
-    )[0];
+    const currentPet = pets?.filter((pet) => pet.id == currentPetId)[0];
     setPet(currentPet);
   }, [currentPetId]);
 
@@ -61,7 +59,7 @@ export default function AddReminder() {
     console.log(form);
   }, [form]);
 
-  if (!auth.user.pets[0]) {
+  if (!pets[0]) {
     return (
       <>
         <div>You have no pets yet</div>

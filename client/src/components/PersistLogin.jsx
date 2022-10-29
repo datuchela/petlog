@@ -18,7 +18,7 @@ const PersistLogin = () => {
   const [loading, setLoading] = useState(true);
   const refresh = useRefreshToken();
   const axiosPrivate = useAxiosPrivate();
-  const auth = useAuth();
+  const { auth } = useAuth();
 
   useEffect(() => {
     let isMounted = true;
@@ -38,30 +38,6 @@ const PersistLogin = () => {
       isMounted = false;
     };
   }, []);
-
-  // useEffect(() => {
-  //   let isMounted = true;
-  //   const controller = new AbortController();
-
-  //   const getUser = async () => {
-  //     try {
-  //       const response = await axiosPrivate.get("/api/users");
-  //       console.log(response.data);
-  //       if (response.data.status === 200) {
-  //         auth.setAuth({ user: response?.data?.user });
-  //       }
-  //     } catch (err) {
-  //       console.error(err);
-  //     }
-  //   };
-
-  //   isMounted && auth?.user && getUser();
-
-  //   return () => {
-  //     isMounted = false;
-  //     controller.abort();
-  //   };
-  // }, []);
 
   return <>{loading ? <LoadingPage /> : <Outlet />}</>;
 };

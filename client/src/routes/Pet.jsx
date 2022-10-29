@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useAuth, useCurrentPet } from "../hooks/useStore";
+import useStore, { useAuth, useCurrentPet, usePets } from "../hooks/useStore";
 import useAxiosPrivate from "../hooks/useAxiosPrivate";
 
 // UI Components
@@ -8,13 +8,11 @@ import Button from "../components/Button";
 
 export default function Pet() {
   const axiosPrivate = useAxiosPrivate();
+  const store = useStore((state) => state);
+  const { auth } = useAuth();
+  const { pets, setPets } = usePets();
   const { currentPetId, setCurrentPetId } = useCurrentPet();
-  const auth = useAuth();
   const [tempPet, setTempPet] = useState();
-
-  // if (!auth?.user?.pets[0]) {
-  //   return <div>You don't have any pets aaaugh</div>;
-  // }
 
   const handleDeleteReminder = async (e) => {
     e.preventDefault();
@@ -43,41 +41,94 @@ export default function Pet() {
       console.log(response.status);
       if (response.status === 204) {
         localStorage.removeItem("currentPetId");
-        const newPetsList = auth.user?.pets?.filter(
+        const newPetsList = pets?.filter(
           (pet) => pet.id !== parseInt(currentPetId)
         );
-        return console.log("should implement setPets/setAuth");
+        const newPetsResponse = await axiosPrivate.get("/api/pets/");
+        if (newPetsResponse.data.status === 200) {
+          setPets(newPetsResponse.data.pets);
+        }
+        return setCurrentPetId(newPetsList[0]?.id);
       }
     } catch (err) {
       console.log(err);
     }
   };
 
+  useEffect(() => {
+    let isMounted = true;
+    const controller = new AbortController();
+
+    const getPets = async () => {
+      try {
+        const response = await axiosPrivate.get("/api/pets/");
+        console.log("pet(s) data: ", response.data);
+        if (response.data.status === 200) {
+          setPets(response.data.pets);
+        }
+      } catch (err) {
+        console.error(err);
+      }
+    };
+
+    isMounted && getPets();
+
+    return () => {
+      console.log("unmounted getPet(s)");
+      isMounted = false;
+      controller.abort();
+    };
+  }, []);
+
+  //
+
+  useEffect(() => {
+    if (!pets[0]) {
+      return () => {
+        console.log("unmounted getPet, no pet to fetch");
+      };
+    }
+    let isMounted = true;
+    const controller = new AbortController();
+
+    const getPet = async () => {
+      try {
+        const response = await axiosPrivate.get(`/api/pets/${currentPetId}`);
+        console.log("pet data: ", response.data);
+        if (response.data.status === 200) {
+          setTempPet(response.data.pet);
+        }
+      } catch (err) {
+        console.error(err);
+        localStorage.setItem("currentPetId", pets[0]?.id);
+        setCurrentPetId(pets[0]?.id);
+      }
+    };
+
+    pets[0] ? isMounted && getPet() : console.log("no pets");
+
+    return () => {
+      console.log("unmounted getPet");
+      isMounted = false;
+      controller.abort();
+    };
+  }, [currentPetId, pets]);
+
   // useEffect(() => {
-  //   let isMounted = true;
-  //   const controller = new AbortController();
+  //   console.log("auth: ", auth);
+  // }, [auth]);
 
-  //   const getPet = async () => {
-  //     try {
-  //       const response = await axiosPrivate.get(`/api/pets/${currentPetId}`);
-  //       console.log(response.data);
-  //       if (response.data.status === 200) {
-  //         setTempPet(response.data.pet);
-  //       }
-  //     } catch (err) {
-  //       console.error(err);
-  //       localStorage.setItem("currentPetId", auth?.user?.pets[0]?.id);
-  //       setCurrentPetId(auth?.user?.pets[0]?.id);
-  //     }
-  //   };
+  // useEffect(() => {
+  //   console.log("pets: ", pets);
+  // }, [pets]);
 
-  //   isMounted && getPet();
+  useEffect(() => {
+    console.log("store: ", store);
+  }, [store]);
 
-  //   return () => {
-  //     isMounted = false;
-  //     controller.abort();
-  //   };
-  // }, [currentPetId]);
+  if (!pets[0]) {
+    return <div>You don't have any pets aaaugh</div>;
+  }
 
   return (
     <>

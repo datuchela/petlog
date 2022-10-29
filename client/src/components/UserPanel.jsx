@@ -1,11 +1,13 @@
 import { useState } from "react";
 import useLogOut from "../hooks/useLogOut";
+import { useAuth } from "../hooks/useStore";
 
 import { Link } from "react-router-dom";
 import OutsideAlerter from "./OutsideAlerter";
 import Button from "./Button";
 
-const UserPanel = ({ auth }) => {
+const UserPanel = () => {
+  const { auth } = useAuth();
   const logOut = useLogOut();
   const [isOpen, setIsOpen] = useState(false);
   return (

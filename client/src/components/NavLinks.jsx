@@ -1,8 +1,10 @@
 import { Link } from "react-router-dom";
+import { useAuth } from "../hooks/useStore";
 
 const linkStyle = "font-medium text-gray-600 hover:text-gray-900 px-2 py-4";
 
-const NavLinks = ({ auth }) => {
+const NavLinks = () => {
+  const { auth } = useAuth();
   if (!auth.user) {
     return (
       <div className="flex items-center gap-6">

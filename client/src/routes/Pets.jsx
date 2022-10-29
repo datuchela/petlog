@@ -8,7 +8,7 @@ import Button from "../components/Button";
 
 export default function Pets() {
   const axiosPrivate = useAxiosPrivate();
-  const auth = useAuth();
+  const { auth } = useAuth();
 
   //   useEffect(() => {
   //     let isMounted = true;

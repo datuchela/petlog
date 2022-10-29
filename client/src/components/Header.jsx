@@ -7,19 +7,19 @@ import UserPanel from "./UserPanel";
 import NavLinks from "./NavLinks";
 
 const Header = () => {
-  const auth = useAuth();
-  // const pets = usePets();
+  const { auth } = useAuth();
+  const { pets } = usePets();
 
   return (
     <header className="flex items-center justify-between w-full px-14 py-6 shadow sticky top-0">
       <Link to="/" className="p-2">
         <img className="h-8" src={imgUrl} />
       </Link>
-      <NavLinks auth={auth} />
+      <NavLinks />
       {auth?.user && (
         <div className="flex items-center gap-8">
-          {auth?.user?.pets[0] && <CurrentPet />}
-          <UserPanel auth={auth} />
+          {pets[0] && <CurrentPet />}
+          <UserPanel />
         </div>
       )}
     </header>

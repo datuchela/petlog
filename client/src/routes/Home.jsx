@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import useStore, { useAuth } from "../hooks/useStore";
+import useStore, { useAuth, usePets } from "../hooks/useStore";
 import useAxiosPrivate from "../hooks/useAxiosPrivate";
 
 // UI Components
@@ -8,7 +8,8 @@ import Button from "../components/Button";
 
 export default function Home() {
   const axiosPrivate = useAxiosPrivate();
-  const auth = useAuth();
+  const { auth, setAuth } = useAuth();
+  const { pets, setPets } = usePets();
   const store = useStore();
 
   useEffect(() => {
@@ -16,31 +17,30 @@ export default function Home() {
     console.log("Store: ", store);
   }, [auth]);
 
-  // useEffect(() => {
-  //   let isMounted = true;
-  //   const controller = new AbortController();
+  useEffect(() => {
+    let isMounted = true;
+    const controller = new AbortController();
 
-  //   const getUser = async () => {
-  //     try {
-  //       const response = await axiosPrivate.get("/api/users");
-  //       // console.log(response.data);
-  //       if (response.data.status === 200) {
-  //         setAuth((prev) => {
-  //           return { ...prev, user: response?.data?.user };
-  //         });
-  //       }
-  //     } catch (err) {
-  //       console.error(err);
-  //     }
-  //   };
+    const getUser = async () => {
+      try {
+        const response = await axiosPrivate.get("/api/users");
+        console.log("/api/users: ", response.data);
+        if (response.data.status === 200) {
+          setAuth({ ...auth, user: response.data.user });
+          setPets(response.data.pets);
+        }
+      } catch (err) {
+        console.error(err);
+      }
+    };
 
-  //   isMounted && getUser();
+    isMounted && getUser();
 
-  //   return () => {
-  //     isMounted = false;
-  //     controller.abort();
-  //   };
-  // }, []);
+    return () => {
+      isMounted = false;
+      controller.abort();
+    };
+  }, []);
 
   return (
     <>
@@ -61,7 +61,7 @@ export default function Home() {
       <div>
         <h1>Pets:</h1>
         <div className="flex gap-8 flex-wrap">
-          {auth.user.pets?.map((pet) => {
+          {pets?.map((pet) => {
             return (
               <div key={pet.id} className="border-4 border-blue-400 p-2">
                 <div className="w-16 h-16">

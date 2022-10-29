@@ -99,6 +99,8 @@ const deletePet = asyncWrapper(async (req, res) => {
       .json({ status: 204, msg: "Pet has been deleted successfully." });
   } catch (error) {
     console.log(error);
+    console.log("userId: ", userId);
+    console.log("petId: ", petId);
     return res
       .status(500)
       .json({ status: 500, msg: "Something went wrong with db" });

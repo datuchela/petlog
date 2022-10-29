@@ -4,11 +4,17 @@ const useStore = create((set) => ({
   auth: {
     accessToken: null,
     user: null,
-    setAuth: (data) =>
-      set((state) => ({
-        auth: { ...state.auth, ...data },
-      })),
   },
+  setAuth: (data) =>
+    set((state) => ({
+      auth: { ...data },
+    })),
+  pets: [],
+  setPets: (data) =>
+    set((state) => ({
+      pets: [...data],
+    })),
+
   currentPet: {
     currentPetId: localStorage.getItem("currentPetId") || "",
     setCurrentPetId: (id) =>
@@ -20,6 +26,15 @@ const useStore = create((set) => ({
 
 export default useStore;
 
-export const useAuth = () => useStore((state) => state.auth);
-export const usePets = () => useStore((state) => state.pets);
+export const useAuth = () =>
+  useStore((state) => ({
+    auth: state.auth,
+    setAuth: state.setAuth,
+  }));
+
+export const usePets = () =>
+  useStore((state) => ({
+    pets: state.pets,
+    setPets: state.setPets,
+  }));
 export const useCurrentPet = () => useStore((state) => state.currentPet);

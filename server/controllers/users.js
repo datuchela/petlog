@@ -61,10 +61,15 @@ const getUser = asyncWrapper(async (req, res) => {
     if (!user) {
       return res.status(404).json({ status: 404, msg: "User not found." });
     }
-    const { password, ...userWithoutPassword } = user;
+    const { password, pets, reminders, ...userWithoutPassword } = user;
     return res
       .status(200)
-      .json({ status: 200, msg: "success", user: userWithoutPassword });
+      .json({
+        status: 200,
+        pets: pets,
+        reminders: reminders,
+        user: userWithoutPassword,
+      });
   } catch (err) {
     console.log(err);
     return res

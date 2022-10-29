@@ -11,7 +11,7 @@ import Input from "../components/Input";
 
 export default function Register() {
   const axiosPrivate = useAxiosPrivate();
-  const auth = useAuth();
+  const { auth, setAuth } = useAuth();
   const navigate = useNavigate();
 
   // handle form inputs
@@ -40,7 +40,7 @@ export default function Register() {
       console.log("authResponse: ", authResponse?.data);
       if (authResponse?.data?.status === 200) {
         const { status, ...rest } = authResponse.data;
-        auth.setAuth(rest);
+        setAuth({ ...auth, ...rest });
         return navigate("/add/pet");
       }
     } catch (error) {

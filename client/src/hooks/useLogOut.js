@@ -2,10 +2,10 @@ import { axiosPrivate } from "../configs/axios";
 import { useAuth } from "./useStore";
 
 const useLogOut = () => {
-  const auth = useAuth();
+  const { auth, setAuth } = useAuth();
 
   const logOut = async () => {
-    auth.setAuth({ user: null, accessToken: null });
+    setAuth({ user: null, accessToken: null });
     try {
       const response = await axiosPrivate.get("/api/auth/logout");
       console.log(response.data); // LOGGING PURPOSES

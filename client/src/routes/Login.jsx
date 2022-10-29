@@ -11,7 +11,7 @@ import Input from "../components/Input";
 
 export default function Login() {
   const axiosPrivate = useAxiosPrivate();
-  const auth = useAuth();
+  const { auth, setAuth } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const from = location?.state?.from?.pathname || "/";
@@ -31,7 +31,7 @@ export default function Login() {
       console.log(response.data);
       if (response?.data?.status === 200) {
         const { status, ...rest } = response.data;
-        auth.setAuth(rest);
+        setAuth({ ...auth, ...rest });
         return navigate(from, { replace: true });
       }
     } catch (err) {
@@ -39,11 +39,9 @@ export default function Login() {
     }
   };
 
-  // useEffect(() => {
-  //   if (auth.user) {
-  //     navigate(from, { replace: true });
-  //   }
-  // }, [auth]);
+  useEffect(() => {
+    console.log(auth);
+  }, [auth]);
 
   return (
     <>

@@ -18,6 +18,7 @@ const authenticate = asyncWrapper(async (req, res) => {
       },
       include: {
         pets: true,
+        reminders: true,
       },
     })) ||
     (await db.user.findUnique({
@@ -26,6 +27,7 @@ const authenticate = asyncWrapper(async (req, res) => {
       },
       include: {
         pets: true,
+        reminders: true,
       },
     }));
 
@@ -62,7 +64,7 @@ const authenticate = asyncWrapper(async (req, res) => {
     },
   });
 
-  const { password, ...userWithoutPassword } = user;
+  const { password, pets, reminders, ...userWithoutPassword } = user;
 
   // res.setHeader(
   //   "Set-Cookie",
@@ -86,6 +88,8 @@ const authenticate = asyncWrapper(async (req, res) => {
   return res.status(200).json({
     status: 200,
     user: userWithoutPassword,
+    pets: pets,
+    reminders: reminders,
     accessToken: accessToken,
   });
 });
@@ -118,7 +122,8 @@ const refreshToken = asyncWrapper(async (req, res) => {
         reminders: true,
       },
     });
-    const { password, ...userWithoutPassword } = userFromDatabase;
+    const { password, pets, reminders, ...userWithoutPassword } =
+      userFromDatabase;
     const accessToken = jwt.sign(
       { id: userFromDatabase.id, username: userFromDatabase.username },
       process.env.ACCESS_TOKEN_SECRET,
@@ -129,6 +134,8 @@ const refreshToken = asyncWrapper(async (req, res) => {
     return res.status(200).json({
       status: 200,
       user: userWithoutPassword,
+      pets: pets,
+      reminders: reminders,
       accessToken: accessToken,
     });
   } catch (error) {
