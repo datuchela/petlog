@@ -157,7 +157,7 @@ export default function AddPet() {
               </div>
             </div>
           </div>
-          <div className="flex gap-16">
+          <div className="flex gap-16 items-center">
             <DateInput
               label="birthday (mm/dd/yyyy)"
               name="birthday"
@@ -168,7 +168,7 @@ export default function AddPet() {
               max={now}
               required
             />
-            <div className="flex flex-col gap-2">
+            <div className="flex flex-col gap-3">
               <label htmlFor="">species</label>
               <div className="border border-gray-400 hover:border-gray-900 pr-2 rounded-md flex items-center justify-between min-w-[272px] max-w-[272px] w-[272px] overflow-hidden h-12">
                 <select

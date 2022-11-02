@@ -6,23 +6,15 @@ import { useQuery, useQueryClient, useMutation } from "react-query";
 import { getPets, deletePet } from "../api/methods";
 
 // UI Components
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import Button from "../components/Button";
 import { useEffect } from "react";
 
 export default function Pet() {
-  const queryClient = useQueryClient();
+  const { petId } = useParams();
   const { currentPetId, setCurrentPetId } = useCurrentPet();
   const [currentPet, setCurrentPet] = useState();
   const { isLoading, isError, error, data } = useQuery("pets", getPets);
-
-  // const deletePetMutation = useMutation(deletePet, {
-  //   onSuccess: queryClient.invalidateQueries("pets"),
-  // });
-
-  // const handleDeletePet = () => {
-  //   // deletePetMutation.mutate(currentPetId);
-  // };
 
   useEffect(() => {
     if (isLoading || isError) {

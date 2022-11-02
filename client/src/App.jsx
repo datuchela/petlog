@@ -32,8 +32,7 @@ export default function App() {
             {/* protected routes */}
             <Route element={<RequireAuth />}>
               <Route path="/" element={<Home />} />
-              <Route path="pet" element={<Pet />} />
-              <Route path="pet/:id" element={<Pet />} />
+              <Route path="pet/:petId" element={<Pet />} />
               <Route path="pets" element={<Pets />} />
               <Route path="add/pet" element={<AddPet />} />
               <Route path="add/reminder" element={<AddReminder />} />
