@@ -7,7 +7,6 @@ import NavLinks from "../molecules/NavLinks";
 
 const Header = () => {
   const { auth } = useAuth();
-  console.log(auth.user);
 
   return (
     <header className="flex items-center justify-between w-full max-h-16 min-h-16 px-14 py-4 shadow-sm sticky top-0 z-20 bg-white">
@@ -15,11 +14,7 @@ const Header = () => {
         <img className="h-8" src={imgUrl} />
       </Link>
       <NavLinks />
-      {auth?.user && (
-        // <div className="flex items-center gap-8">
-        <UserPanel />
-        // </div>
-      )}
+      {auth?.user && <UserPanel />}
     </header>
   );
 };

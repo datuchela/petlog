@@ -1,37 +1,18 @@
-import { useEffect } from "react";
-import { useQuery } from "react-query";
-import { getPets } from "../api/methods";
-import useAxiosPrivate from "../hooks/useAxiosPrivate";
+import useAuth from "../hooks/useAuth";
 
 const Home = () => {
-  const axiosPrivate = useAxiosPrivate();
-
-  const { isLoading, isError, error, data } = useQuery("pets", getPets);
-
-  // useEffect(() => {
-  //   let isMount = true;
-  //   const controller = new AbortController();
-  //   async function getPets() {
-  //     try {
-  //       const response = await axiosPrivate.get("/api/pets");
-  //       console.log(response.data);
-  //     } catch (error) {
-  //       console.log(error);
-  //       controller.abort();
-  //     }
-  //   }
-
-  //   isMount && getPets();
-
-  //   return () => {
-  //     isMount = false;
-  //     controller.abort();
-  //   };
-  // }, []);
-
+  const { auth } = useAuth();
   return (
     <>
-      <div>hello</div>
+      <div>hello, {auth.user.username}</div>
+      <div>
+        <h2>Your pets:</h2>
+        <ul>
+          {auth.pets?.map((pet) => {
+            return <li key={pet.id}>{pet.name}</li>;
+          })}
+        </ul>
+      </div>
     </>
   );
 };
