@@ -7,3 +7,4 @@
 5. [ ] Implement real functionality when it comes to vaccinations
 6. [ ] Show error messages in form
 7. [ ] Change-up design
+8. [ ] "Pet as if likes"
