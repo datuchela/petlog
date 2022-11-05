@@ -5,7 +5,7 @@ const addPet = asyncWrapper(async (req, res) => {
   const userId = req.userId;
   const { name, gender, birthday, weight, speciesId } = req.body;
   if (!req.body || !name || !gender || !birthday || !speciesId) {
-    return res.status(400).json({ status: 400, msg: "Some values are empty." });
+    return res.status(400).json({ msg: "Some values are empty." });
   }
 
   const capitalizedName = name.charAt(0).toUpperCase() + name.slice(1); // capitalize name
@@ -22,13 +22,12 @@ const addPet = asyncWrapper(async (req, res) => {
     },
   });
 
-  return res.status(201).json({ status: 201, pet: pet });
+  return res.status(201).json({ pet: pet });
 });
 
 const getPet = asyncWrapper(async (req, res) => {
   const petId = parseInt(req.params.petId);
   const userId = parseInt(req.userId);
-
   try {
     const pet = await db.pet.findFirst({
       where: {
@@ -40,9 +39,9 @@ const getPet = asyncWrapper(async (req, res) => {
       },
     });
     if (pet === null) {
-      return res.status(404).json({ status: 404, msg: "pet not found." });
+      return res.status(404).json({ msg: "pet not found." });
     }
-    res.status(200).json({ status: 200, pet: pet });
+    return res.status(200).json({ pet: pet });
   } catch (error) {
     console.log(error);
     return res.status(500).json({ msg: "Something went wrong..." });
@@ -61,9 +60,9 @@ const getPets = asyncWrapper(async (req, res) => {
       },
     });
     if (pets === null) {
-      return res.status(404).json({ status: 404, msg: "no pets found." });
+      return res.status(404).json({ msg: "no pets found." });
     }
-    res.status(200).json({ status: 200, pets: pets });
+    res.status(200).json({ pets: pets });
   } catch (error) {
     console.log(error);
     return res.status(500).json({ msg: "Something went wrong on db" });
@@ -84,7 +83,6 @@ const deletePet = asyncWrapper(async (req, res) => {
 
     if (!pet)
       return res.status(404).json({
-        status: 404,
         msg: "Pet not found or you are not authorized",
       });
 
@@ -94,16 +92,12 @@ const deletePet = asyncWrapper(async (req, res) => {
       },
     });
 
-    return res
-      .status(200)
-      .json({ status: 200, msg: "Pet has been deleted successfully." });
+    return res.status(200).json({ msg: "Pet has been deleted successfully." });
   } catch (error) {
     console.log(error);
     console.log("userId: ", userId);
     console.log("petId: ", petId);
-    return res
-      .status(500)
-      .json({ status: 500, msg: "Something went wrong with db" });
+    return res.status(500).json({ msg: "Something went wrong with db" });
   }
 });
 

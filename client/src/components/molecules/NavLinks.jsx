@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { useAuth } from "../hooks/useStore";
+import { useAuth } from "../../hooks/useStore";
 
 const linkStyle = "font-medium text-gray-600 hover:text-gray-900 px-2 py-4";
 
@@ -28,9 +28,6 @@ const NavLinks = () => {
       </Link> */}
       <Link to="/add/reminder" className={linkStyle}>
         📅 Add Reminder
-      </Link>
-      <Link to="/pet" className={linkStyle}>
-        Current Pet
       </Link>
     </div>
   );

@@ -2,7 +2,6 @@ import { Outlet } from "react-router-dom";
 import { useState, useEffect } from "react";
 import useRefreshToken from "../hooks/useRefreshToken";
 import { useAuth } from "../hooks/useStore";
-import useAxiosPrivate from "../hooks/useAxiosPrivate";
 
 import imgUrl from "../assets/logo.svg";
 
@@ -17,7 +16,6 @@ const LoadingPage = () => {
 const PersistLogin = () => {
   const [loading, setLoading] = useState(true);
   const refresh = useRefreshToken();
-  const axiosPrivate = useAxiosPrivate();
   const { auth } = useAuth();
 
   useEffect(() => {

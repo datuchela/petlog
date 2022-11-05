@@ -1,86 +1,83 @@
-import { useEffect } from "react";
+import { useState } from "react";
+import { useAuth } from "../hooks/useStore";
+import useForm from "../hooks/useForm";
 import { useNavigate, useLocation } from "react-router-dom";
 import useAxiosPrivate from "../hooks/useAxiosPrivate";
-import useForm from "../hooks/useForm";
-import { useAuth } from "../hooks/useStore";
 
 // UI Components
-import { Link } from "react-router-dom";
-import Button from "../components/Button";
-import Input from "../components/Input";
+import Heading from "../components/atoms/Heading";
+import Button from "../components/atoms/Button";
+import VerticalInput from "../components/molecules/VerticalInput";
+import Link from "../components/atoms/Link";
 
-export default function Login() {
+const Login = () => {
   const axiosPrivate = useAxiosPrivate();
   const { auth, setAuth } = useAuth();
+  const [form, handleChange] = useForm({ usernameOrEmail: "", password: "" });
+
+  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
   const from = location?.state?.from?.pathname || "/";
 
-  const [form, handleChange] = useForm({
-    usernameOrEmail: "",
-    password: "",
-  });
-
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsLoading(true);
     try {
       const response = await axiosPrivate.post(
         "/api/auth",
         JSON.stringify(form)
       );
       console.log(response.data);
-      if (response?.data?.status === 200) {
-        const { status, ...rest } = response.data;
-        setAuth({ ...auth, ...rest });
+      if (response?.status === 200) {
+        setAuth({ ...auth, ...response.data });
         return navigate(from, { replace: true });
       }
     } catch (err) {
       console.log(err);
+    } finally {
+      setIsLoading(false);
     }
   };
 
-  useEffect(() => {
-    console.log(auth);
-  }, [auth]);
-
   return (
     <>
-      <h1 className="text-4xl font-semibold text-gray-800">Log in</h1>
-      <form
-        className="flex flex-col gap-6"
-        onSubmit={handleSubmit}
-        action="submit"
-      >
+      <Heading>Login</Heading>
+      <form className="flex flex-col gap-6" onSubmit={handleSubmit}>
         <div className="flex flex-col gap-4">
-          <Input
-            label="username or email"
-            emoji="🧑🏻"
+          <VerticalInput
+            type="text"
             name="usernameOrEmail"
-            placeholder="datuchela"
+            label="Username or Email"
+            emoji="🧑🏻"
+            placeholder="example"
             value={form.usernameOrEmail}
-            onChange={handleChange}
-            // pattern={"^[A-Za-z]+$"}
-            required
+            handleChange={handleChange}
           />
-          <Input
+          <VerticalInput
             type="password"
-            label="password"
-            emoji="🔑"
             name="password"
-            placeholder="********"
+            label="Password"
+            emoji="🔑"
+            placeholder="*********"
             value={form.password}
-            onChange={handleChange}
-            required
+            handleChange={handleChange}
           />
         </div>
-        <Link
-          to="/register"
-          className="font-medium text-gray-600 hover:text-gray-900 w-fit"
-        >
-          Don't have an account?
-        </Link>
-        <Button onSubmit={handleSubmit}>Log in</Button>
+        <div className="flex flex-col gap-4">
+          <Button disabled={isLoading} type="submit" className="w-full">
+            Log in
+          </Button>
+          <div className="flex items-center gap-1">
+            <span className="text-gray-900">don't have an account yet?</span>
+            <Link className="w-min" to="/register">
+              register
+            </Link>
+          </div>
+        </div>
       </form>
     </>
   );
-}
+};
+
+export default Login;

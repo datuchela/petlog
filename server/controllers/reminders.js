@@ -32,7 +32,7 @@ const addReminder = asyncWrapper(async (req, res) => {
         userId: userId,
       },
     });
-    return res.status(201).json({ status: 201, reminder: reminder });
+    return res.status(201).json({ reminder: reminder });
   } catch (error) {
     console.log(error);
     return res
@@ -54,7 +54,6 @@ const deleteReminder = asyncWrapper(async (req, res) => {
 
     if (!reminder)
       return res.status(404).json({
-        status: 404,
         msg: "Reminder not found or you are not authorized",
       });
 
@@ -66,12 +65,10 @@ const deleteReminder = asyncWrapper(async (req, res) => {
 
     return res
       .status(204)
-      .json({ status: 204, msg: "Reminder has been deleted successfully." });
+      .json({ msg: "Reminder has been deleted successfully." });
   } catch (error) {
     console.log(error);
-    return res
-      .status(500)
-      .json({ status: 500, msg: "Something went wrong with db" });
+    return res.status(500).json({ msg: "Something went wrong with db" });
   }
 });
 
