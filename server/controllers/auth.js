@@ -7,7 +7,8 @@ const asyncWrapper = require("../middleware/asyncWrapper");
 
 const authenticate = asyncWrapper(async (req, res) => {
   if (!req.body || !req.body.usernameOrEmail || !req.body.password) {
-    return res.status(400).json({ status: 400, msg: "Some values are empty." });
+    console.log(req.body);
+    return res.status(400).json({ msg: "Some values are empty." });
   }
 
   // finds an user in db with username or email
@@ -32,12 +33,12 @@ const authenticate = asyncWrapper(async (req, res) => {
     }));
 
   if (!user) {
-    return res.status(404).json({ status: 404, msg: "User not found." });
+    return res.status(404).json({ msg: "User not found." });
   }
 
   const validPassword = await bcrypt.compare(req.body.password, user.password);
   if (!validPassword) {
-    return res.status(401).json({ status: 401, msg: "Invalid Credentials" });
+    return res.status(401).json({ msg: "Invalid Credentials" });
   }
 
   // TODO: use .env file for secrets
@@ -86,7 +87,6 @@ const authenticate = asyncWrapper(async (req, res) => {
   });
 
   return res.status(200).json({
-    status: 200,
     user: userWithoutPassword,
     pets: pets,
     reminders: reminders,
@@ -96,9 +96,7 @@ const authenticate = asyncWrapper(async (req, res) => {
 
 const refreshToken = asyncWrapper(async (req, res) => {
   if (!req.headers.cookie) {
-    return res
-      .status(400)
-      .json({ status: 400, logOut: true, msg: "Must provide refresh token" });
+    return res.status(400).json({ msg: "Must provide refresh token" });
   }
   const { refreshToken } = cookie.parse(req.headers.cookie);
 
@@ -109,9 +107,7 @@ const refreshToken = asyncWrapper(async (req, res) => {
   });
   if (!validRefreshToken) {
     res.clearCookie("refreshToken");
-    return res
-      .status(400)
-      .json({ status: 400, logOut: true, msg: "invalid refresh token" });
+    return res.status(400).json({ msg: "invalid refresh token" });
   }
   try {
     const user = jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET);
@@ -132,7 +128,6 @@ const refreshToken = asyncWrapper(async (req, res) => {
       }
     );
     return res.status(200).json({
-      status: 200,
       user: userWithoutPassword,
       pets: pets,
       reminders: reminders,
@@ -146,9 +141,7 @@ const refreshToken = asyncWrapper(async (req, res) => {
       },
     });
     res.clearCookie("refreshToken");
-    return res
-      .status(400)
-      .json({ status: 400, logOut: true, msg: error.message });
+    return res.status(400).json({ logOut: true, msg: error.message });
   }
 });
 
@@ -156,7 +149,7 @@ const logOut = asyncWrapper(async (req, res) => {
   if (!req.headers.cookie) {
     return res
       .status(401)
-      .json({ status: 401, msg: "Must provide refresh token to logout" });
+      .json({ msg: "Must provide refresh token to logout" });
   }
   const { refreshToken } = cookie.parse(req.headers.cookie);
   try {
@@ -166,12 +159,10 @@ const logOut = asyncWrapper(async (req, res) => {
       },
     });
     res.clearCookie("refreshToken");
-    return res.status(200).json({ status: 200, msg: "logged out" });
+    return res.status(200).json({ msg: "logged out" });
   } catch (error) {
     console.log(error.message);
-    return res
-      .status(500)
-      .json({ status: 500, msg: "Something went wrong on the server." });
+    return res.status(500).json({ msg: "Something went wrong on the server." });
   }
 });
 

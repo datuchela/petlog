@@ -10,7 +10,7 @@ const addUser = asyncWrapper(async (req, res) => {
     !req.body.email ||
     !req.body.password
   ) {
-    return res.status(400).json({ status: 400, msg: "Some values are empty." });
+    return res.status(400).json({ msg: "Some values are empty." });
   }
 
   const hashedPassword = await bcrypt.hash(req.body.password, 10);
@@ -43,7 +43,7 @@ const addUser = asyncWrapper(async (req, res) => {
 
   const { password, ...userWithoutPassword } = user;
 
-  res.status(200).json({ status: 200, user: userWithoutPassword });
+  res.status(200).json({ user: userWithoutPassword });
 });
 
 const getUser = asyncWrapper(async (req, res) => {
@@ -59,22 +59,19 @@ const getUser = asyncWrapper(async (req, res) => {
       },
     });
     if (!user) {
-      return res.status(404).json({ status: 404, msg: "User not found." });
+      return res.status(404).json({ msg: "User not found." });
     }
     const { password, pets, reminders, ...userWithoutPassword } = user;
-    return res
-      .status(200)
-      .json({
-        status: 200,
-        pets: pets,
-        reminders: reminders,
-        user: userWithoutPassword,
-      });
+    return res.status(200).json({
+      pets: pets,
+      reminders: reminders,
+      user: userWithoutPassword,
+    });
   } catch (err) {
     console.log(err);
     return res
       .status(500)
-      .json({ status: 500, msg: "Something went wrong when retrieving data" });
+      .json({ msg: "Something went wrong when retrieving data" });
   }
 });
 

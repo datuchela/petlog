@@ -16,16 +16,24 @@ export const axiosPrivate = axios.create({
 
 export const getUser = async () => {
   const response = await axiosPrivate.get("/api/users");
+  console.log("getUser: ", response.data);
+  return response.data;
+};
+
+export const getPet = async (petId) => {
+  const response = await axiosPrivate.get(`/api/pets/${petId}`);
+  console.log("getPet: ", response.data);
   return response.data;
 };
 
 export const getPets = async () => {
   const response = await axiosPrivate.get("/api/pets");
+  console.log("getPets: ", response.data);
   return response.data;
 };
 
 export const deletePet = async (id) => {
   const response = await axiosPrivate.delete(`/api/pets/${id}`);
-  console.log(response.data);
+  console.log("deletePet: ", response.data);
   return response.data;
 };

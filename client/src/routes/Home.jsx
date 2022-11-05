@@ -1,21 +1,35 @@
-import { useQuery, useMutation, useQueryClient } from "react-query";
-import { getUser } from "../api/methods";
+import { useEffect } from "react";
+import { useQuery } from "react-query";
+import { getPets } from "../api/methods";
+import useAxiosPrivate from "../hooks/useAxiosPrivate";
 
-// UI Components
-import { Link } from "react-router-dom";
-import Button from "../components/Button";
+const Home = () => {
+  const axiosPrivate = useAxiosPrivate();
 
-export default function Home() {
-  const queryClient = useQueryClient();
-  const { isLoading, isError, error, data: user } = useQuery("user", getUser);
+  const { isLoading, isError, error, data } = useQuery("pets", getPets);
 
-  if (isLoading) {
-    return <div>loading...</div>;
-  }
+  // useEffect(() => {
+  //   let isMount = true;
+  //   const controller = new AbortController();
+  //   async function getPets() {
+  //     try {
+  //       const response = await axiosPrivate.get("/api/pets");
+  //       console.log(response.data);
+  //     } catch (error) {
+  //       console.log(error);
+  //       controller.abort();
+  //     }
+  //   }
 
-  return (
-    <>
-      <div>{isError ? error.message : JSON.stringify(user)}</div>
-    </>
-  );
-}
+  //   isMount && getPets();
+
+  //   return () => {
+  //     isMount = false;
+  //     controller.abort();
+  //   };
+  // }, []);
+
+  return <>{data ? JSON.stringify(data) : "no data"}</>;
+};
+
+export default Home;

@@ -4,7 +4,7 @@ import { useAuth } from "../hooks/useStore";
 
 import { Link } from "react-router-dom";
 import OutsideAlerter from "./OutsideAlerter";
-import Button from "./Button";
+import Button from "./atoms/Button";
 
 const UserPanel = () => {
   const { auth } = useAuth();

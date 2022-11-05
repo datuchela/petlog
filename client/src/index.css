@@ -4,6 +4,11 @@
 
 body {
   font-family: "Fira Sans", sans-serif;
+  height: 100%;
+}
+
+#root {
+  height: 100%;
 }
 
 .date::-webkit-calendar-picker-indicator {

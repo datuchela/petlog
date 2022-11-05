@@ -1,5 +1,5 @@
 import axios from "axios";
-import { useAuth, usePets } from "./useStore";
+import { useAuth } from "./useStore";
 
 const BASE_URL = import.meta.env.DEV
   ? "http://localhost:5050"
@@ -7,7 +7,6 @@ const BASE_URL = import.meta.env.DEV
 
 const useRefreshToken = () => {
   const { auth, setAuth } = useAuth();
-  const { setPets } = usePets();
   const refresh = async () => {
     const response = await axios.get("/api/auth/refresh", {
       baseURL: BASE_URL,
@@ -18,7 +17,6 @@ const useRefreshToken = () => {
       accessToken: response.data.accessToken,
       user: response.data.user,
     });
-    setPets([...response.data.pets]);
     return response.data.accessToken;
   };
 
