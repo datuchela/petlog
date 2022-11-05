@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { useAuth } from "../../hooks/useStore";
+import useAuth from "../../hooks/useAuth";
 
 const linkStyle = "font-medium text-gray-600 hover:text-gray-900 px-2 py-4";
 

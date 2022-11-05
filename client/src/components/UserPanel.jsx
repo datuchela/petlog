@@ -1,6 +1,6 @@
 import { useState } from "react";
 import useLogOut from "../hooks/useLogOut";
-import { useAuth } from "../hooks/useStore";
+import useAuth from "../hooks/useAuth";
 
 import { Link } from "react-router-dom";
 import OutsideAlerter from "./OutsideAlerter";

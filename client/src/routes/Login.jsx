@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useAuth } from "../hooks/useStore";
+import useAuth from "../hooks/useAuth";
 import useForm from "../hooks/useForm";
 import { useNavigate, useLocation } from "react-router-dom";
 import useAxiosPrivate from "../hooks/useAxiosPrivate";

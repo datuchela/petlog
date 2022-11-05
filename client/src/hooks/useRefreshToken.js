@@ -1,5 +1,5 @@
 import axios from "axios";
-import { useAuth } from "./useStore";
+import useAuth from "./useAuth";
 
 const BASE_URL = import.meta.env.DEV
   ? "http://localhost:5050"

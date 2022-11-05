@@ -29,7 +29,11 @@ const Home = () => {
   //   };
   // }, []);
 
-  return <>{data ? JSON.stringify(data) : "no data"}</>;
+  return (
+    <>
+      <div>hello</div>
+    </>
+  );
 };
 
 export default Home;
