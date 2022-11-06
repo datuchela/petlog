@@ -2,7 +2,7 @@ import useAuth from "../../hooks/useAuth";
 
 import { Link } from "react-router-dom";
 import imgUrl from "../../assets/logo.svg";
-import UserPanel from "../UserPanel";
+import UserPanel from "../molecules/UserPanel";
 import NavLinks from "../molecules/NavLinks";
 
 const Header = () => {

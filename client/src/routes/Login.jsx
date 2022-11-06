@@ -10,7 +10,7 @@ import Button from "../components/atoms/Button";
 import VerticalInput from "../components/molecules/VerticalInput";
 import Link from "../components/atoms/Link";
 
-const Login = () => {
+const LoginPage = () => {
   const axiosPrivate = useAxiosPrivate();
   const { auth, setAuth } = useAuth();
   const [form, handleChange] = useForm({ usernameOrEmail: "", password: "" });
@@ -80,4 +80,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default LoginPage;

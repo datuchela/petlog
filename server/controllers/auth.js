@@ -46,7 +46,7 @@ const authenticate = asyncWrapper(async (req, res) => {
     { id: user.id, username: user.username },
     process.env.ACCESS_TOKEN_SECRET,
     {
-      expiresIn: "15m",
+      expiresIn: "10s",
     }
   );
 
@@ -54,7 +54,7 @@ const authenticate = asyncWrapper(async (req, res) => {
     { id: user.id, username: user.username },
     process.env.REFRESH_TOKEN_SECRET,
     {
-      expiresIn: "30m",
+      expiresIn: "15s",
     }
   );
 
@@ -66,17 +66,6 @@ const authenticate = asyncWrapper(async (req, res) => {
   });
 
   const { password, pets, reminders, ...userWithoutPassword } = user;
-
-  // res.setHeader(
-  //   "Set-Cookie",
-  //   cookie.serialize("refreshToken", refreshToken, {
-  //     httpOnly: true,
-  //     secure: true,
-  //     sameSite: true,
-  //     maxAge: 2592000000,
-  //     path: "/",
-  //   })
-  // );
 
   res.cookie("refreshToken", refreshToken, {
     httpOnly: true,

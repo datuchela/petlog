@@ -1,6 +1,9 @@
 import useAuth from "../hooks/useAuth";
 
-const Home = () => {
+// UI Components
+import Link from "../components/atoms/Link";
+
+const HomePage = () => {
   const { auth } = useAuth();
   return (
     <>
@@ -9,7 +12,11 @@ const Home = () => {
         <h2>Your pets:</h2>
         <ul>
           {auth.pets?.map((pet) => {
-            return <li key={pet.id}>{pet.name}</li>;
+            return (
+              <li key={pet.id}>
+                <Link to={`/pet/${pet.id}`}>{pet.name}</Link>
+              </li>
+            );
           })}
         </ul>
       </div>
@@ -17,4 +24,4 @@ const Home = () => {
   );
 };
 
-export default Home;
+export default HomePage;

@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { useQuery } from "react-query";
 import { Outlet } from "react-router-dom";
 import { getUser } from "../../api/methods";
@@ -6,7 +7,6 @@ import useAuth from "../../hooks/useAuth";
 
 // UI Components
 import Header from "../organisms/Header";
-import { useEffect } from "react";
 import StatusBar from "../organisms/StatusBar";
 
 const Layout = () => {
@@ -19,6 +19,7 @@ const Layout = () => {
   useEffect(() => {
     setAuth({ ...auth, ...data });
   }, [data]);
+
   useEffect(() => {
     console.log("auth:", auth);
   }, [auth]);
@@ -28,7 +29,7 @@ const Layout = () => {
       {isLoading ? (
         <Loading />
       ) : isError ? (
-        <div>{error.message}</div>
+        <div>{JSON.stringify(error)}</div>
       ) : (
         <>
           <Header />

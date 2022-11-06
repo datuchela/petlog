@@ -4,10 +4,11 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Layout from "./components/layouts/Layout";
 import UnauthLayout from "./components/layouts/UnauthLayout";
 
-import Login from "./routes/Login";
-import Register from "./routes/Register";
-import Home from "./routes/Home";
-import Pet from "./routes/Pet";
+import LoginPage from "./routes/login";
+import RegisterPage from "./routes/register";
+import HomePage from "./routes";
+import PetPage from "./routes/pet/[petId]";
+import AddPetPage from "./routes/add/pet";
 import ErrorPage from "./routes/ErrorPage";
 
 //
@@ -26,16 +27,17 @@ export default function App() {
             {/* public routes */}
             <Route element={<Unauthenticated />}>
               <Route element={<UnauthLayout />}>
-                <Route path="login" element={<Login />} />
-                <Route path="register" element={<Register />} />
+                <Route path="login" element={<LoginPage />} />
+                <Route path="register" element={<RegisterPage />} />
               </Route>
             </Route>
 
             {/* protected routes */}
             <Route element={<RequireAuth />}>
               <Route element={<Layout />}>
-                <Route path="/" element={<Home />} />
-                <Route path="/pet/:petId" element={<Pet />} />
+                <Route path="/" element={<HomePage />} />
+                <Route path="/pet/:petId" element={<PetPage />} />
+                <Route path="/add/pet" element={<AddPetPage />} />
               </Route>
             </Route>
 

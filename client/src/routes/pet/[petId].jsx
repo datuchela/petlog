@@ -1,11 +1,11 @@
 import { useParams } from "react-router-dom";
 import { useQuery } from "react-query";
-import { getPet } from "../api/methods";
+import { getPet } from "../../api/methods";
 
 //UI Components
-import Link from "../components/atoms/Link";
+import Link from "../../components/atoms/Link";
 
-const Pet = () => {
+const PetPage = () => {
   const { petId } = useParams();
   const { isLoading, isError, error, data } = useQuery(["pets", petId], () =>
     getPet(petId)
@@ -13,10 +13,15 @@ const Pet = () => {
 
   return (
     <div className="flex flex-col gap-4">
-      <div>{data ? JSON.stringify(data) : "no data"}</div>
-      <Link to="/login">Login</Link>
+      {isLoading ? (
+        <div>Loading...</div>
+      ) : isError ? (
+        <div>{error?.message}</div>
+      ) : (
+        <div>{JSON.stringify(data)}</div>
+      )}
     </div>
   );
 };
 
-export default Pet;
+export default PetPage;
