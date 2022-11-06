@@ -1,7 +1,110 @@
-import React from "react";
+import { useState } from "react";
+import useAuth from "../hooks/useAuth";
+import useForm from "../hooks/useForm";
+import { useNavigate, useLocation } from "react-router-dom";
+import useAxiosPrivate from "../hooks/useAxiosPrivate";
+
+// UI Components
+import Heading from "../components/atoms/Heading";
+import Button from "../components/atoms/Button";
+import VerticalInput from "../components/molecules/VerticalInput";
+import Link from "../components/atoms/Link";
 
 const RegisterPage = () => {
-  return <div>Register</div>;
+  const axiosPrivate = useAxiosPrivate();
+  const { auth, setAuth } = useAuth();
+  const [form, handleChange] = useForm({
+    username: "",
+    email: "",
+    password: "",
+    repeatPassword: "",
+  });
+  const [isLoading, setIsLoading] = useState(false);
+
+  const navigate = useNavigate();
+  // const location = useLocation();
+  const from = location?.state?.from?.pathname || "/";
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setIsLoading(true);
+    try {
+      const response = await axiosPrivate.post(
+        "/api/users",
+        JSON.stringify(form)
+      );
+      console.log(response.data);
+      if (response?.status === 201) {
+        setAuth({ ...auth, ...response.data });
+        return navigate("/", { replace: true });
+      }
+    } catch (err) {
+      console.log(err);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  return (
+    <>
+      <Heading>Register</Heading>
+      <form className="flex flex-col gap-6" onSubmit={handleSubmit}>
+        <div className="flex flex-col gap-6">
+          <div className="flex items-center gap-6">
+            <VerticalInput
+              type="text"
+              name="username"
+              label="Username"
+              emoji="🧑🏻"
+              placeholder="example"
+              value={form.username}
+              handleChange={handleChange}
+            />
+            <VerticalInput
+              type="email"
+              name="email"
+              label="Email"
+              emoji="📧"
+              placeholder="example@mail.com"
+              value={form.email}
+              handleChange={handleChange}
+            />
+          </div>
+          <div className="flex items-center gap-6">
+            <VerticalInput
+              type="password"
+              name="password"
+              label="Password"
+              emoji="🔑"
+              placeholder="*********"
+              value={form.password}
+              handleChange={handleChange}
+            />
+            <VerticalInput
+              type="password"
+              name="repeatPassword"
+              label="Repeat Password"
+              emoji="🔑"
+              placeholder="*********"
+              value={form.repeatPassword}
+              handleChange={handleChange}
+            />
+          </div>
+        </div>
+        <div className="flex flex-col gap-4">
+          <Button disabled={isLoading} type="submit" className="w-full">
+            Sign Up
+          </Button>
+          <div className="flex items-center gap-1">
+            <span className="text-gray-900">Already have an account?</span>
+            <Link className="w-min" to="/login">
+              Login
+            </Link>
+          </div>
+        </div>
+      </form>
+    </>
+  );
 };
 
 export default RegisterPage;

@@ -12,7 +12,7 @@ const TextInput = ({
 
   return (
     <div
-      className={`flex items-center gap-2 px-2 py-1 h-[44px] border border-[#727272] rounded-lg overflow-hidden cursor-text ${wrapperStyle}`}
+      className={`flex items-center gap-2 px-2 min-h-[40px] border border-[#727272] rounded-lg overflow-hidden cursor-text ${wrapperStyle}`}
       onClick={() => inputRef.current.focus()}
     >
       {emoji && <div>{emoji}</div>}

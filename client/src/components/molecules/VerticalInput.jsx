@@ -12,7 +12,7 @@ const VerticalInput = ({
     <div className="flex flex-col gap-2">
       <Label htmlFor={name}>{label}</Label>
       <TextInput
-        wrapperStyle="w-[272px] h-9"
+        wrapperStyle="w-[272px] h-12"
         name={name}
         value={value}
         handleChange={handleChange}
