@@ -1,10 +1,10 @@
 import { useState } from "react";
-import useLogOut from "../hooks/useLogOut";
-import { useAuth } from "../hooks/useStore";
+import useLogOut from "../../hooks/useLogOut";
+import useAuth from "../../hooks/useAuth";
 
 import { Link } from "react-router-dom";
-import OutsideAlerter from "./OutsideAlerter";
-import Button from "./atoms/Button";
+import OutsideAlerter from "../OutsideAlerter";
+import Button from "../atoms/Button";
 
 const UserPanel = () => {
   const { auth } = useAuth();

@@ -1,17 +1,9 @@
 import { Outlet } from "react-router-dom";
 import { useState, useEffect } from "react";
 import useRefreshToken from "../hooks/useRefreshToken";
-import { useAuth } from "../hooks/useStore";
+import useAuth from "../hooks/useAuth";
 
-import imgUrl from "../assets/logo.svg";
-
-const LoadingPage = () => {
-  return (
-    <main className="flex items-center justify-center w-full h-[80vh]">
-      <img className="h-32 animate-pulse" src={imgUrl} alt="logo" />
-    </main>
-  );
-};
+import Loading from "./Loading";
 
 const PersistLogin = () => {
   const [loading, setLoading] = useState(true);
@@ -37,7 +29,7 @@ const PersistLogin = () => {
     };
   }, []);
 
-  return <>{loading ? <LoadingPage /> : <Outlet />}</>;
+  return <>{loading ? <Loading /> : <Outlet />}</>;
 };
 
 export default PersistLogin;
