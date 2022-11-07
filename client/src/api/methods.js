@@ -1,18 +1,30 @@
-import axios from "axios";
+import axios from "./axios";
+import { axiosPrivate } from "./axios";
 
-const BASE_URL = import.meta.env.DEV
-  ? "http://localhost:5050"
-  : "http://192.168.1.16:5050";
+export const refreshToken = async () => {
+  const response = await axios.get("/api/auth/refresh", {
+    withCredentials: true,
+  });
+  return response.data;
+};
 
-export default axios.create({
-  baseURL: BASE_URL,
-});
+export const authenticate = async (body) => {
+  const response = await axiosPrivate.post("/api/auth", JSON.stringify(body));
+  console.log("authenticate: ", response.data);
+  return response.data;
+};
 
-export const axiosPrivate = axios.create({
-  baseURL: BASE_URL,
-  headers: { "Content-Type": "application/json" },
-  withCredentials: true,
-});
+export const logout = async () => {
+  const response = await axiosPrivate.get("/api/auth/logout");
+  console.log("logout: ", response.data);
+  return response.data;
+};
+
+export const addUser = async (body) => {
+  const response = await axiosPrivate.post("/api/users", JSON.stringify(body));
+  console.log("addUser: ", response.data);
+  return response.data;
+};
 
 export const getUser = async () => {
   const response = await axiosPrivate.get("/api/users");

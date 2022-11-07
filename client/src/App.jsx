@@ -24,25 +24,21 @@ export default function App() {
         {/* Provides AxiosPrivate instance to all children */}
         <Route element={<AxiosPrivate />}>
           <Route element={<PersistLogin />}>
-            {/* public routes */}
-            <Route element={<Unauthenticated />}>
-              <Route element={<UnauthLayout />}>
+            <Route element={<Layout />}>
+              {/* public routes */}
+              <Route element={<Unauthenticated />}>
                 <Route path="login" element={<LoginPage />} />
                 <Route path="register" element={<RegisterPage />} />
               </Route>
-            </Route>
 
-            {/* protected routes */}
-            <Route element={<RequireAuth />}>
-              <Route element={<Layout />}>
+              {/* protected routes */}
+              <Route element={<RequireAuth />}>
                 <Route path="/" element={<HomePage />} />
                 <Route path="/pet/:petId" element={<PetPage />} />
                 <Route path="/add/pet" element={<AddPetPage />} />
               </Route>
-            </Route>
 
-            {/* fallback routes */}
-            <Route element={<UnauthLayout />}>
+              {/* fallback routes */}
               <Route path="*" element={<ErrorPage />} />
             </Route>
           </Route>

@@ -1,8 +1,8 @@
-import { useState } from "react";
-import useAuth from "../hooks/useAuth";
+import { useNavigate } from "react-router-dom";
+
+// custom hooks
 import useForm from "../hooks/useForm";
-import { useNavigate, useLocation } from "react-router-dom";
-import useAxiosPrivate from "../hooks/useAxiosPrivate";
+import useRegister from "../hooks/useRegister";
 
 // UI Components
 import Heading from "../components/atoms/Heading";
@@ -11,38 +11,20 @@ import VerticalInput from "../components/molecules/VerticalInput";
 import Link from "../components/atoms/Link";
 
 const RegisterPage = () => {
-  const axiosPrivate = useAxiosPrivate();
-  const { auth, setAuth } = useAuth();
+  const navigate = useNavigate();
   const [form, handleChange] = useForm({
     username: "",
     email: "",
     password: "",
     repeatPassword: "",
   });
-  const [isLoading, setIsLoading] = useState(false);
 
-  const navigate = useNavigate();
-  // const location = useLocation();
-  const from = location?.state?.from?.pathname || "/";
+  const { register, mutation } = useRegister();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setIsLoading(true);
-    try {
-      const response = await axiosPrivate.post(
-        "/api/users",
-        JSON.stringify(form)
-      );
-      console.log(response.data);
-      if (response?.status === 201) {
-        setAuth({ ...auth, ...response.data });
-        return navigate("/", { replace: true });
-      }
-    } catch (err) {
-      console.log(err);
-    } finally {
-      setIsLoading(false);
-    }
+    await register(form);
+    navigate("/add/pet", { replace: true });
   };
 
   return (
@@ -92,7 +74,11 @@ const RegisterPage = () => {
           </div>
         </div>
         <div className="flex flex-col gap-4">
-          <Button disabled={isLoading} type="submit" className="w-full">
+          <Button
+            disabled={mutation.isLoading}
+            type="submit"
+            className="w-full"
+          >
             Sign Up
           </Button>
           <div className="flex items-center gap-1">

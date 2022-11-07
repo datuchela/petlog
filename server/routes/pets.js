@@ -2,12 +2,15 @@ const express = require("express");
 const router = express.Router();
 
 //middleware
-const verifyToken = require("../middleware/verifyToken");
+const verifyAccessToken = require("../middleware/verifyAccessToken");
 
 const { getPet, addPet, deletePet, getPets } = require("../controllers/pets");
 
-router.route("/").get(verifyToken, getPets);
-router.route("/:petId").get(verifyToken, getPet).delete(verifyToken, deletePet);
-router.route("/").post(verifyToken, addPet);
+router.route("/").get(verifyAccessToken, getPets);
+router
+  .route("/:petId")
+  .get(verifyAccessToken, getPet)
+  .delete(verifyAccessToken, deletePet);
+router.route("/").post(verifyAccessToken, addPet);
 
 module.exports = router;

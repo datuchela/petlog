@@ -1,7 +1,10 @@
 const { db } = require("../db");
 const bcrypt = require("bcrypt");
-const jwt = require("jsonwebtoken");
 const asyncWrapper = require("../middleware/asyncWrapper");
+const {
+  generateAccessToken,
+  generateRefreshToken,
+} = require("../utils/generateToken");
 
 const addUser = asyncWrapper(async (req, res) => {
   if (
@@ -24,21 +27,15 @@ const addUser = asyncWrapper(async (req, res) => {
     },
   });
 
-  const accessToken = jwt.sign(
-    { id: user.id, username: user.username },
-    process.env.ACCESS_TOKEN_SECRET,
-    {
-      expiresIn: "10s",
-    }
-  );
+  const accessToken = generateAccessToken({
+    id: user.id,
+    username: user.username,
+  });
 
-  const refreshToken = jwt.sign(
-    { id: user.id, username: user.username },
-    process.env.REFRESH_TOKEN_SECRET,
-    {
-      expiresIn: "15s",
-    }
-  );
+  const refreshToken = generateRefreshToken({
+    id: user.id,
+    username: user.username,
+  });
 
   await db.refreshToken.create({
     data: {
