@@ -1,13 +1,14 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
-import App from "./App";
-import "./index.css";
-
-import { AuthProvider } from "./context/AuthProvider";
 
 //reactQuery
 import { QueryClient, QueryClientProvider } from "react-query";
 import { ReactQueryDevtools } from "react-query/devtools";
+
+import { AuthProvider } from "./context/AuthProvider";
+
+import App from "./App";
+import "./index.css";
 
 const queryClient = new QueryClient();
 
