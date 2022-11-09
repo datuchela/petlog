@@ -44,8 +44,20 @@ export const getPets = async () => {
   return response.data;
 };
 
+export const addPet = async (body) => {
+  const response = await axiosPrivate.post("/api/pets", JSON.stringify(body));
+  console.log("addPet: ", response.data);
+  return response.data;
+};
+
 export const deletePet = async (id) => {
   const response = await axiosPrivate.delete(`/api/pets/${id}`);
   console.log("deletePet: ", response.data);
+  return response.data;
+};
+
+export const getSpecies = async () => {
+  const response = await axiosPrivate.get("/api/species");
+  console.log("getSpecies: ", response.data);
   return response.data;
 };

@@ -24,7 +24,9 @@ const RegisterPage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     await register(form);
-    navigate("/add/pet", { replace: true });
+    if (mutation.isSuccess) {
+      return navigate("/add/pet", { replace: true });
+    }
   };
 
   return (
