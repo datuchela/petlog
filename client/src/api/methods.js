@@ -50,8 +50,8 @@ export const addPet = async (body) => {
   return response.data;
 };
 
-export const deletePet = async (id) => {
-  const response = await axiosPrivate.delete(`/api/pets/${id}`);
+export const deletePet = async (petId) => {
+  const response = await axiosPrivate.delete(`/api/pets/${petId}`);
   console.log("deletePet: ", response.data);
   return response.data;
 };
@@ -59,5 +59,32 @@ export const deletePet = async (id) => {
 export const getSpecies = async () => {
   const response = await axiosPrivate.get("/api/species");
   console.log("getSpecies: ", response.data);
+  return response.data;
+};
+
+export const getReminders = async () => {
+  const response = await axiosPrivate.get("/api/reminders");
+  console.log("getReminders: ", response.data);
+  return response.data;
+};
+
+export const getReminder = async (reminderId) => {
+  const response = await axiosPrivate.get(`/api/reminders/${reminderId}`);
+  console.log("getReminder: ", response.data);
+  return response.data;
+};
+
+export const addReminder = async (body) => {
+  const response = await axiosPrivate.post(
+    "/api/reminders",
+    JSON.stringify(body)
+  );
+  console.log("addReminder: ", response.data);
+  return response.data;
+};
+
+export const deleteReminder = async (reminderId) => {
+  const response = await axiosPrivate.delete(`/api/reminders/${reminderId}`);
+  console.log("deleteReminder: ", response.data);
   return response.data;
 };

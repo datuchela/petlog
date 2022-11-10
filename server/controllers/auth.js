@@ -22,8 +22,8 @@ const authenticate = asyncWrapper(async (req, res) => {
         username: req.body.usernameOrEmail,
       },
       include: {
-        pets: true,
-        reminders: true,
+        pets: false,
+        reminders: false,
       },
     })) ||
     (await db.user.findUnique({
@@ -31,8 +31,8 @@ const authenticate = asyncWrapper(async (req, res) => {
         email: req.body.usernameOrEmail,
       },
       include: {
-        pets: true,
-        reminders: true,
+        pets: false,
+        reminders: false,
       },
     }));
 
@@ -99,8 +99,8 @@ const refreshToken = asyncWrapper(async (req, res) => {
     const userFromDatabase = await db.user.findUnique({
       where: { id: user.id },
       include: {
-        pets: true,
-        reminders: true,
+        pets: false,
+        reminders: false,
       },
     });
     const { password, pets, reminders, ...userWithoutPassword } =

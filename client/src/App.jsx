@@ -9,6 +9,7 @@ import RegisterPage from "./routes/register";
 import HomePage from "./routes";
 import PetPage from "./routes/pet/[petId]";
 import AddPetPage from "./routes/add/pet";
+import AddReminderPage from "./routes/add/reminder";
 import ErrorPage from "./routes/ErrorPage";
 
 //
@@ -36,6 +37,7 @@ export default function App() {
                 <Route path="/" element={<HomePage />} />
                 <Route path="/pet/:petId" element={<PetPage />} />
                 <Route path="/add/pet" element={<AddPetPage />} />
+                <Route path="/add/reminder" element={<AddReminderPage />} />
               </Route>
 
               {/* fallback routes */}

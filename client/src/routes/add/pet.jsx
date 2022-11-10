@@ -1,28 +1,36 @@
 import { useNavigate } from "react-router-dom";
 import { useQuery } from "react-query";
+import { useEffect } from "react";
 
 // custom hooks
 import useForm from "../../hooks/useForm";
-import useAddPet from "../../hooks/useAddPet";
-import { getSpecies } from "../../api/methods";
+import usePet from "../../hooks/usePet";
+import usePets from "../../hooks/usePets";
+import { getPets, getSpecies } from "../../api/methods";
 
 // UI Components
 import Heading from "../../components/atoms/Heading";
 import Button from "../../components/atoms/Button";
 import VerticalInput from "../../components/molecules/VerticalInput";
 import Link from "../../components/atoms/Link";
+import VerticalSelect from "../../components/molecules/VerticalSelect";
 
 const AddPetPage = () => {
   const navigate = useNavigate();
+  const { pets, isLoading: isPetsLoading } = usePets();
   const [form, handleChange] = useForm({
     name: "",
-    gender: "",
+    gender: "male",
     birthday: "",
     speciesId: "1",
   });
 
+  useEffect(() => {
+    console.log(pets);
+  }, [pets]);
+
   const {
-    isLoading: isLoading,
+    isLoading: isSpeciesLoading,
     isError: speciesIsError,
     error: speciesError,
     data: speciesData,
@@ -30,12 +38,17 @@ const AddPetPage = () => {
     refetchOnWindowFocus: false,
   });
 
-  const { add, mutation } = useAddPet();
+  const emojiArray = ["🐕", "🐈", "🦅"];
+
+  const { addPet } = usePet();
+  const mutation = addPet();
+  const { isLoading, isError, data, mutate } = mutation;
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    await add(form);
-    if (mutation.isSuccess) {
+    mutate(form);
+    if (!isLoading && !isError) {
+      console.log(mutation);
       console.log("isSuccess");
       return navigate("/", { replace: true });
     }
@@ -43,7 +56,7 @@ const AddPetPage = () => {
 
   return (
     <>
-      <Heading>Add Pet 🐕</Heading>
+      <Heading>Let's get to know your pet</Heading>
       <form className="flex flex-col gap-6" onSubmit={handleSubmit}>
         <div className="flex flex-col gap-6">
           <div className="flex items-center gap-6">
@@ -56,15 +69,19 @@ const AddPetPage = () => {
               value={form.name}
               handleChange={handleChange}
             />
-            <VerticalInput
-              type="text"
+            <VerticalSelect
               name="gender"
               label="gender"
-              emoji="🐩"
-              placeholder="Male or Female"
               value={form.gender}
-              handleChange={handleChange}
-            />
+              onChange={handleChange}
+            >
+              <option key="male" value="male">
+                male
+              </option>
+              <option key="female" value="female">
+                female
+              </option>
+            </VerticalSelect>
           </div>
           <div className="flex items-center gap-6">
             <VerticalInput
@@ -76,37 +93,24 @@ const AddPetPage = () => {
               value={form.birthday}
               handleChange={handleChange}
             />
-            <select
+            <VerticalSelect
               name="speciesId"
-              placeholder={isLoading ? "Loading..." : "Select species"}
+              label="species"
               value={form.speciesId}
               onChange={handleChange}
             >
               {speciesData?.species?.map((specie) => {
                 return (
                   <option key={specie.id} value={specie.id}>
-                    {specie.name}
+                    {emojiArray[specie.id - 1] + " " + specie.name}
                   </option>
                 );
               })}
-            </select>
-            {/* <VerticalInput
-              type="select"
-              name="speciesId"
-              label="species"
-              emoji="🐹"
-              placeholder="Select species"
-              value={form.speciesId}
-              handleChange={handleChange}
-            /> */}
+            </VerticalSelect>
           </div>
         </div>
         <div className="flex flex-col gap-4">
-          <Button
-            disabled={mutation.isLoading}
-            type="submit"
-            className="w-full"
-          >
+          <Button disabled={isLoading} type="submit" className="w-full">
             Add Pet
           </Button>
           <div className="flex items-center gap-1 text-sm">
@@ -119,6 +123,14 @@ const AddPetPage = () => {
           </div>
         </div>
       </form>
+      <div>
+        <div>Pets:</div>
+        <div>
+          {isPetsLoading
+            ? "Loading..."
+            : pets?.map((pet) => <div key={pet.id}>{pet.name}</div>)}
+        </div>
+      </div>
     </>
   );
 };

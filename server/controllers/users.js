@@ -68,8 +68,8 @@ const getUser = asyncWrapper(async (req, res) => {
         id: userId,
       },
       include: {
-        pets: true,
-        reminders: true,
+        pets: false,
+        reminders: false,
       },
     });
     if (!user) {
