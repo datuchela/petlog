@@ -8,3 +8,8 @@
 6. [x] _BUG02_ You shouldn't be getting data after refreshToken expires.
 7. [x] Log out when refresh token expires
 8. [ ] Use CRON jobs to update upcoming date in reminders
+
+# features to implement:
+
+[ ] TanStack/Router
+[ ] TanStack/Form
