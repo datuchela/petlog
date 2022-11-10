@@ -1,4 +1,4 @@
-import { axiosPrivate } from "../api/methods";
+import { axiosPrivate } from "../api/axios";
 import { useEffect } from "react";
 import useRefreshToken from "./useRefreshToken";
 import useAuth from "./useAuth";
@@ -8,22 +8,31 @@ const useAxiosPrivate = () => {
   const refresh = useRefreshToken();
 
   useEffect(() => {
+    // console.log("mounting interceptors..."); // MOUNTED LOG
     const requestIntercept = axiosPrivate.interceptors.request.use(
-      (config) => {
-        if (!config.headers["Authorization"]) {
-          config.headers["Authorization"] = `Bearer ${auth?.accessToken}`;
+      (request) => {
+        console.log("sending request with interceptors");
+        if (!request.headers["Authorization"]) {
+          request.headers["Authorization"] = `Bearer ${auth?.accessToken}`;
         }
-        return config;
+        return request;
       },
       (error) => Promise.reject(error)
     );
 
     const responseIntercept = axiosPrivate.interceptors.response.use(
-      (response) => response,
+      (response) => {
+        console.log("received response with interceptors");
+        return response;
+      },
       async (error) => {
+        console.log("error: ", error.response);
         const prevRequest = error?.config;
         if (error?.response?.status === 403 && !prevRequest?.sent) {
-          const newAccessToken = await refresh();
+          const { newAccessToken, isError, error } = await refresh();
+          if (isError) {
+            if (error?.response?.data?.logOut) window.location.reload();
+          }
           prevRequest.headers["Authorization"] = `Bearer ${newAccessToken}`;
           prevRequest.sent = true;
           return axiosPrivate(prevRequest);
@@ -33,9 +42,14 @@ const useAxiosPrivate = () => {
     );
 
     return () => {
+      // console.log("unmounting interceptors..."); // UNMOUNTED LOG
       axiosPrivate.interceptors.request.eject(requestIntercept);
       axiosPrivate.interceptors.response.eject(responseIntercept);
     };
+  }, [auth, refresh]);
+
+  useEffect(() => {
+    console.count("useAxiosPrivate rerenders");
   }, [auth, refresh]);
 
   return axiosPrivate;

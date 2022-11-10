@@ -1,8 +1,6 @@
-import { useState } from "react";
-import useAuth from "../hooks/useAuth";
+// custom hooks
+import useAuthenticate from "../hooks/useAuthenticate";
 import useForm from "../hooks/useForm";
-import { useNavigate, useLocation } from "react-router-dom";
-import useAxiosPrivate from "../hooks/useAxiosPrivate";
 
 // UI Components
 import Heading from "../components/atoms/Heading";
@@ -11,33 +9,12 @@ import VerticalInput from "../components/molecules/VerticalInput";
 import Link from "../components/atoms/Link";
 
 const LoginPage = () => {
-  const axiosPrivate = useAxiosPrivate();
-  const { auth, setAuth } = useAuth();
+  const { logIn, mutation } = useAuthenticate();
   const [form, handleChange] = useForm({ usernameOrEmail: "", password: "" });
-
-  const [isLoading, setIsLoading] = useState(false);
-  const navigate = useNavigate();
-  const location = useLocation();
-  const from = location?.state?.from?.pathname || "/";
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setIsLoading(true);
-    try {
-      const response = await axiosPrivate.post(
-        "/api/auth",
-        JSON.stringify(form)
-      );
-      console.log(response.data);
-      if (response?.status === 200) {
-        setAuth({ ...auth, ...response.data });
-        return navigate(from, { replace: true });
-      }
-    } catch (err) {
-      console.log(err);
-    } finally {
-      setIsLoading(false);
-    }
+    await logIn(form);
   };
 
   return (
@@ -65,7 +42,11 @@ const LoginPage = () => {
           />
         </div>
         <div className="flex flex-col gap-4">
-          <Button disabled={isLoading} type="submit" className="w-full">
+          <Button
+            disabled={mutation.isLoading}
+            type="submit"
+            className="w-full"
+          >
             Log in
           </Button>
           <div className="flex items-center gap-1">

@@ -1,29 +1,31 @@
-import axios from "axios";
+import { refreshToken } from "../api/methods";
+import { useQuery } from "react-query";
 import useAuth from "./useAuth";
-import useLogOut from "./useLogOut";
-
-const BASE_URL = import.meta.env.DEV
-  ? "http://localhost:5050"
-  : "http://192.168.1.16:5050";
 
 const useRefreshToken = () => {
-  const logOut = useLogOut();
-  const { auth, setAuth } = useAuth();
-  const refresh = async () => {
-    const response = await axios.get("/api/auth/refresh", {
-      baseURL: BASE_URL,
-      withCredentials: true,
-    });
+  const { setAuth } = useAuth();
 
-    if (response.status !== 200) {
-      return null;
+  const { refetch, data, isLoading, isError, error } = useQuery(
+    "auth",
+    refreshToken,
+    {
+      enabled: false,
+      refetchOnWindowFocus: false,
+      refetchOnMount: false,
+      retry: false,
+      onSuccess: (data) => setAuth((prev) => ({ ...prev, ...data })),
     }
-    setAuth({
-      ...auth,
-      accessToken: response.data.accessToken,
-      user: response.data.user,
-    });
-    return response.data.accessToken;
+  );
+
+  const refresh = async () => {
+    console.log("refreshing token...");
+    await refetch();
+    return {
+      newAccessToken: data?.accessToken,
+      isLoading: isLoading,
+      isError: isError,
+      error: error,
+    };
   };
 
   return refresh;

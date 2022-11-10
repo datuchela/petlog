@@ -1,18 +1,30 @@
-import axios from "axios";
+import axios from "./axios";
+import { axiosPrivate } from "./axios";
 
-const BASE_URL = import.meta.env.DEV
-  ? "http://localhost:5050"
-  : "http://192.168.1.16:5050";
+export const refreshToken = async () => {
+  const response = await axios.get("/api/auth/refresh", {
+    withCredentials: true,
+  });
+  return response.data;
+};
 
-export default axios.create({
-  baseURL: BASE_URL,
-});
+export const authenticate = async (body) => {
+  const response = await axiosPrivate.post("/api/auth", JSON.stringify(body));
+  console.log("authenticate: ", response.data);
+  return response.data;
+};
 
-export const axiosPrivate = axios.create({
-  baseURL: BASE_URL,
-  headers: { "Content-Type": "application/json" },
-  withCredentials: true,
-});
+export const logout = async () => {
+  const response = await axiosPrivate.get("/api/auth/logout");
+  console.log("logout: ", response.data);
+  return response.data;
+};
+
+export const addUser = async (body) => {
+  const response = await axiosPrivate.post("/api/users", JSON.stringify(body));
+  console.log("addUser: ", response.data);
+  return response.data;
+};
 
 export const getUser = async () => {
   const response = await axiosPrivate.get("/api/users");
@@ -32,8 +44,47 @@ export const getPets = async () => {
   return response.data;
 };
 
-export const deletePet = async (id) => {
-  const response = await axiosPrivate.delete(`/api/pets/${id}`);
+export const addPet = async (body) => {
+  const response = await axiosPrivate.post("/api/pets", JSON.stringify(body));
+  console.log("addPet: ", response.data);
+  return response.data;
+};
+
+export const deletePet = async (petId) => {
+  const response = await axiosPrivate.delete(`/api/pets/${petId}`);
   console.log("deletePet: ", response.data);
+  return response.data;
+};
+
+export const getSpecies = async () => {
+  const response = await axiosPrivate.get("/api/species");
+  console.log("getSpecies: ", response.data);
+  return response.data;
+};
+
+export const getReminders = async () => {
+  const response = await axiosPrivate.get("/api/reminders");
+  console.log("getReminders: ", response.data);
+  return response.data;
+};
+
+export const getReminder = async (reminderId) => {
+  const response = await axiosPrivate.get(`/api/reminders/${reminderId}`);
+  console.log("getReminder: ", response.data);
+  return response.data;
+};
+
+export const addReminder = async (body) => {
+  const response = await axiosPrivate.post(
+    "/api/reminders",
+    JSON.stringify(body)
+  );
+  console.log("addReminder: ", response.data);
+  return response.data;
+};
+
+export const deleteReminder = async (reminderId) => {
+  const response = await axiosPrivate.delete(`/api/reminders/${reminderId}`);
+  console.log("deleteReminder: ", response.data);
   return response.data;
 };

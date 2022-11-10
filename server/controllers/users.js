@@ -1,7 +1,10 @@
 const { db } = require("../db");
 const bcrypt = require("bcrypt");
-// const axios = require("axios");
 const asyncWrapper = require("../middleware/asyncWrapper");
+const {
+  generateAccessToken,
+  generateRefreshToken,
+} = require("../utils/generateToken");
 
 const addUser = asyncWrapper(async (req, res) => {
   if (
@@ -24,26 +27,37 @@ const addUser = asyncWrapper(async (req, res) => {
     },
   });
 
-  // try {
-  //   const response = await axios.post(
-  //     "/api/auth",
-  //     JSON.stringify({ usernameOrEmail: req.username, password: req.password }),
-  //     {
-  //       headers: {
-  //         "Content-Type": "application/json",
-  //       },
-  //       withCredentials: true,
-  //       baseURL: "http://localhost:5050/",
-  //     }
-  //   );
-  //   console.log(response.data);
-  // } catch (error) {
-  //   console.log(error);
-  // }
+  const accessToken = generateAccessToken({
+    id: user.id,
+    username: user.username,
+  });
+
+  const refreshToken = generateRefreshToken({
+    id: user.id,
+    username: user.username,
+  });
+
+  await db.refreshToken.create({
+    data: {
+      token: refreshToken,
+      userId: user.id,
+    },
+  });
 
   const { password, ...userWithoutPassword } = user;
 
-  res.status(200).json({ user: userWithoutPassword });
+  res.cookie("refreshToken", refreshToken, {
+    httpOnly: true,
+    secure: true,
+    sameSite: true,
+    maxAge: 2592000000,
+    path: "/",
+  });
+
+  return res.status(201).json({
+    user: userWithoutPassword,
+    accessToken: accessToken,
+  });
 });
 
 const getUser = asyncWrapper(async (req, res) => {
@@ -54,8 +68,8 @@ const getUser = asyncWrapper(async (req, res) => {
         id: userId,
       },
       include: {
-        pets: true,
-        reminders: true,
+        pets: false,
+        reminders: false,
       },
     });
     if (!user) {

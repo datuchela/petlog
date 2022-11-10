@@ -1,7 +1,7 @@
 const jwt = require("jsonwebtoken");
 const asyncWrapper = require("./asyncWrapper");
 
-const verifyToken = asyncWrapper(async (req, res, next) => {
+const verifyAccessToken = asyncWrapper(async (req, res, next) => {
   const authHeader = req.headers["authorization"];
   // console.log(authHeader);
   if (!authHeader) {
@@ -18,4 +18,4 @@ const verifyToken = asyncWrapper(async (req, res, next) => {
   return next();
 });
 
-module.exports = verifyToken;
+module.exports = verifyAccessToken;

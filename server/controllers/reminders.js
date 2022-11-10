@@ -64,7 +64,7 @@ const deleteReminder = asyncWrapper(async (req, res) => {
     });
 
     return res
-      .status(204)
+      .status(200)
       .json({ msg: "Reminder has been deleted successfully." });
   } catch (error) {
     console.log(error);

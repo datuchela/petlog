@@ -4,6 +4,10 @@ const cookie = require("cookie");
 const { db } = require("../db");
 
 const asyncWrapper = require("../middleware/asyncWrapper");
+const {
+  generateAccessToken,
+  generateRefreshToken,
+} = require("../utils/generateToken");
 
 const authenticate = asyncWrapper(async (req, res) => {
   if (!req.body || !req.body.usernameOrEmail || !req.body.password) {
@@ -18,8 +22,8 @@ const authenticate = asyncWrapper(async (req, res) => {
         username: req.body.usernameOrEmail,
       },
       include: {
-        pets: true,
-        reminders: true,
+        pets: false,
+        reminders: false,
       },
     })) ||
     (await db.user.findUnique({
@@ -27,8 +31,8 @@ const authenticate = asyncWrapper(async (req, res) => {
         email: req.body.usernameOrEmail,
       },
       include: {
-        pets: true,
-        reminders: true,
+        pets: false,
+        reminders: false,
       },
     }));
 
@@ -41,22 +45,14 @@ const authenticate = asyncWrapper(async (req, res) => {
     return res.status(401).json({ msg: "Invalid Credentials" });
   }
 
-  // TODO: use .env file for secrets
-  const accessToken = jwt.sign(
-    { id: user.id, username: user.username },
-    process.env.ACCESS_TOKEN_SECRET,
-    {
-      expiresIn: "10s",
-    }
-  );
-
-  const refreshToken = jwt.sign(
-    { id: user.id, username: user.username },
-    process.env.REFRESH_TOKEN_SECRET,
-    {
-      expiresIn: "15s",
-    }
-  );
+  const accessToken = generateAccessToken({
+    id: user.id,
+    username: user.username,
+  });
+  const refreshToken = generateRefreshToken({
+    id: user.id,
+    username: user.username,
+  });
 
   await db.refreshToken.create({
     data: {
@@ -103,25 +99,26 @@ const refreshToken = asyncWrapper(async (req, res) => {
     const userFromDatabase = await db.user.findUnique({
       where: { id: user.id },
       include: {
-        pets: true,
-        reminders: true,
+        pets: false,
+        reminders: false,
       },
     });
     const { password, pets, reminders, ...userWithoutPassword } =
       userFromDatabase;
-    const accessToken = jwt.sign(
-      { id: userFromDatabase.id, username: userFromDatabase.username },
-      process.env.ACCESS_TOKEN_SECRET,
-      {
-        expiresIn: "15m",
-      }
-    );
+
+    const accessToken = generateAccessToken({
+      id: userFromDatabase.id,
+      username: userFromDatabase.username,
+    });
+
     return res.status(200).json({
       user: userWithoutPassword,
       pets: pets,
       reminders: reminders,
       accessToken: accessToken,
     });
+
+    // handle errors
   } catch (error) {
     console.error(error);
     await db.refreshToken.delete({
@@ -130,7 +127,7 @@ const refreshToken = asyncWrapper(async (req, res) => {
       },
     });
     res.clearCookie("refreshToken");
-    return res.status(400).json({ logOut: true, msg: error.message });
+    return res.status(401).json({ logOut: true, msg: error.message });
   }
 });
 
