@@ -1,9 +1,11 @@
 const { db } = require("./db");
 
-const dateInMilliseconds = (date) => {
-  return date.now();
-};
-const currentDateMilliseconds = dateInMilliseconds(Date);
+const currentDateInMilliseconds = new Date("2022-12-14").getTime();
+
+// for reminders/dates lookup
+const currentDate = new Date(currentDateInMilliseconds);
+const currentDateString = currentDate.toISOString().split("T")[0];
+
 const millisecondsInDay = 1000 * 60 * 60 * 24;
 
 const intervalTypes = [
@@ -35,19 +37,12 @@ const convertToMilliseconds = (intervalType, intervalValue) => {
 
 const calculateUpcoming = (intervalType, intervalValue) => {
   const interval = convertToMilliseconds(intervalType, intervalValue);
-  const nextDateInMilliseconds = currentDateMilliseconds + interval;
+  const nextDateInMilliseconds = currentDateInMilliseconds + interval;
   const dateAfter = new Date(nextDateInMilliseconds)
     .toISOString()
     .split("T")[0];
   return dateAfter;
 };
-
-// for reminders/dates lookup
-const currentDate = new Date();
-const currentDateString = currentDate.toISOString().split("T")[0];
-
-const newDateISO = new Date().getDate();
-console.log("newDate: ", newDateISO);
 
 const getReminders = async () => {
   try {
