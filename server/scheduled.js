@@ -1,6 +1,6 @@
 const { db } = require("./db");
 
-const currentDateInMilliseconds = new Date("2022-12-14").getTime();
+const currentDateInMilliseconds = new Date().getTime();
 
 // for reminders/dates lookup
 const currentDate = new Date(currentDateInMilliseconds);
