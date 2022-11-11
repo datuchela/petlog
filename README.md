@@ -1,7 +1,7 @@
 # petLog
 
 A simple web app for tracking reminders exclusively for pets.
-_Note: The project is nowhere near finished._
+<br/>_Note: The project is nowhere near finished._
 
 # stuff to do:
 
