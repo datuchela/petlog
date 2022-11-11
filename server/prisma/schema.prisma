@@ -34,12 +34,20 @@ model RefreshToken {
 //   count Int @default(1)
 // }
 
+
+model Date {
+  date String @unique
+  reminders Reminder[]
+}
+
+
 model Reminder {
   id Int @id @default(autoincrement())
   name String
+  date Date @relation(fields: [upcoming], references: [date], onDelete: Cascade)
   upcoming String
   intervalValue Int
-  intervalType String
+  intervalType Int
   pet Pet @relation(fields: [petId], references: [id], onDelete: Cascade)
   petId Int
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
