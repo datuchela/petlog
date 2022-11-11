@@ -47,7 +47,7 @@ model Reminder {
   date Date @relation(fields: [upcoming], references: [date], onDelete: Cascade)
   upcoming String
   intervalValue Int
-  intervalType String
+  intervalType Int
   pet Pet @relation(fields: [petId], references: [id], onDelete: Cascade)
   petId Int
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)

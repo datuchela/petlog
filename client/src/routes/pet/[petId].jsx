@@ -53,6 +53,7 @@ const PetPage = () => {
             {data.pet.reminders?.map((reminder) => (
               <div key={reminder.id} className="flex items-center gap-2">
                 <div>{reminder.name}</div>
+                <div className="text-red-500">{reminder.upcoming}</div>
                 <button
                   className="font-medium text-gray-900"
                   onClick={() => handleDeleteReminder(reminder.id)}

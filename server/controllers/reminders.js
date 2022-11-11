@@ -8,10 +8,10 @@ const addReminder = asyncWrapper(async (req, res) => {
     !req.body.name ||
     !req.body.upcoming ||
     !req.body.intervalValue ||
-    !req.body.intervalType
+    req.body.intervalType === null
   ) {
     console.log(req.body);
-    return res.status(400).json({ status: 400, msg: "Some values are empty." });
+    return res.status(400).json({ msg: "Some values are empty." });
   }
   const userId = req.userId;
   try {
@@ -21,13 +21,32 @@ const addReminder = asyncWrapper(async (req, res) => {
         id: parseInt(req.body.petId),
       },
     });
-    if (!pet) return res.status(404).json({ status: 404, msg: "Not found" });
+    if (!pet) return res.status(404).json({ msg: "Not found" });
+
+    try {
+      const date = await db.date.upsert({
+        where: {
+          date: req.body.upcoming,
+        },
+        update: {
+          date: req.body.upcoming,
+        },
+        create: {
+          date: req.body.upcoming,
+        },
+      });
+      console.log(date);
+    } catch (error) {
+      console.error(error);
+      return res.status(500).json({ msg: "Error creating date" });
+    }
+
     const reminder = await db.reminder.create({
       data: {
         name: req.body.name,
         upcoming: req.body.upcoming,
         intervalValue: parseInt(req.body.intervalValue),
-        intervalType: req.body.intervalType,
+        intervalType: parseInt(req.body.intervalType),
         petId: pet.id,
         userId: userId,
       },
@@ -35,9 +54,7 @@ const addReminder = asyncWrapper(async (req, res) => {
     return res.status(201).json({ reminder: reminder });
   } catch (error) {
     console.log(error);
-    return res
-      .status(500)
-      .json({ status: 500, msg: "Something went wrong with db" });
+    return res.status(500).json({ msg: "Something went wrong with db" });
   }
 });
 

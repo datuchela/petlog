@@ -22,14 +22,14 @@ const AddReminderPage = () => {
     name: "",
     upcoming: "",
     intervalValue: "",
-    intervalType: "day(s)",
+    intervalType: 0,
     petId: "",
   });
 
   const { pets, isLoading: petsIsLoading } = usePets();
 
   useLayoutEffect(() => {
-    setForm((prev) => ({ ...prev, petId: `${pets[1]?.id}` }));
+    setForm((prev) => ({ ...prev, petId: `${pets[0]?.id}` }));
   }, [pets]);
 
   const { addReminder } = useReminder();
@@ -111,10 +111,10 @@ const AddReminderPage = () => {
                   value={form.intervalType}
                   onChange={handleChange}
                 >
-                  <option value="day">day(s)</option>
-                  <option value="week">week(s)</option>
-                  <option value="month">month(s)</option>
-                  <option value="year">year(s)</option>
+                  <option value={0}>day(s)</option>
+                  <option value={1}>week(s)</option>
+                  <option value={2}>month(s)</option>
+                  <option value={3}>year(s)</option>
                 </Select>
               </div>
             </div>
