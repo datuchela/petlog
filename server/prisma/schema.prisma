@@ -44,8 +44,8 @@ model Date {
 model Reminder {
   id Int @id @default(autoincrement())
   name String
-  date Date @relation(fields: [dateString], references: [date], onDelete: Cascade)
-  dateString String
+  date Date @relation(fields: [upcoming], references: [date], onDelete: Cascade)
+  upcoming String
   intervalValue Int
   intervalType String
   pet Pet @relation(fields: [petId], references: [id], onDelete: Cascade)
