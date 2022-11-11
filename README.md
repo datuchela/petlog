@@ -1,3 +1,8 @@
+# petLog
+
+A simple web app for tracking reminders exclusively for pets.
+_Note: The project is nowhere near finished._
+
 # stuff to do:
 
 1. [ ] _BUG04_ addPet page doesn't navigate you to homepage on success, has to do with isSuccess itself.
