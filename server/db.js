@@ -8,9 +8,7 @@ if (process.env.NODE_ENV === "production") {
 } else {
   //check if there is already a connection to the database
   if (!global.db) {
-    global.db = new PrismaClient({
-      datasources: { db: { url: `mysql://${process.env.DATABASE_URL}` } },
-    });
+    global.db = new PrismaClient();
   }
   db = global.db;
 }
