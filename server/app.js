@@ -48,10 +48,10 @@ app.get("*/assets/:filename", (req, res) => {
     path.join(__dirname, `../client/dist/assets/${req.params.filename}`)
   );
 });
-app.use(express.static(path.join(__dirname, "../client/dist/"))); // react
+app.use(express.static(path.join(__dirname, "./dist/"))); // react
 
 app.use("/api/*", error); // handle /api/ errors
-app.use("*", express.static(path.join(__dirname, "../client/dist"))); // fall backs to react-router
+app.use("*", express.static(path.join(__dirname, "./dist"))); // fall backs to react-router
 
 app.listen(PORT, () => {
   console.log("Server running on port", PORT);

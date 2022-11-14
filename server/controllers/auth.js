@@ -66,7 +66,7 @@ const authenticate = asyncWrapper(async (req, res) => {
   res.cookie("refreshToken", refreshToken, {
     httpOnly: true,
     secure: true,
-    // sameSite: true,
+    sameSite: true,
     maxAge: 2592000000,
     path: "/",
   });
