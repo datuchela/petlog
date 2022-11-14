@@ -44,9 +44,7 @@ app.use("/api/reminders", remindersRouter);
 
 //static files
 app.get("*/assets/:filename", (req, res) => {
-  res.sendFile(
-    path.join(__dirname, `../client/dist/assets/${req.params.filename}`)
-  );
+  res.sendFile(path.join(__dirname, `./dist/assets/${req.params.filename}`));
 });
 app.use(express.static(path.join(__dirname, "./dist/"))); // react
 
