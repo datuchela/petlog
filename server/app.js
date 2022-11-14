@@ -30,6 +30,11 @@ const speciesRouter = require("./routes/species");
 const remindersRouter = require("./routes/reminders");
 const { error } = require("./controllers/error");
 
+// For Health-check
+app.get("/", (req, res) => {
+  res.send("hello");
+});
+
 app.use("/api/auth", authRouter);
 app.use("/api/users", usersRouter);
 app.use("/api/pets", petsRouter);
