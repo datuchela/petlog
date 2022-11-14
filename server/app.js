@@ -13,6 +13,7 @@ const corsOptions = {
     "http://192.168.1.16:3000",
     "http://localhost:5050",
     "http://192.168.1.16:5050",
+    "https://petlog.datuchela.com",
   ],
   preflightContinue: true,
   credentials: true,
@@ -31,9 +32,9 @@ const remindersRouter = require("./routes/reminders");
 const { error } = require("./controllers/error");
 
 // For Health-check
-app.get("/", (req, res) => {
-  res.send("hello");
-});
+// app.get("/", (req, res) => {
+//   res.send("hello");
+// });
 
 app.use("/api/auth", authRouter);
 app.use("/api/users", usersRouter);
