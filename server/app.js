@@ -32,9 +32,9 @@ const remindersRouter = require("./routes/reminders");
 const { error } = require("./controllers/error");
 
 // For Health-check
-// app.get("/", (req, res) => {
-//   res.send("hello");
-// });
+app.get("/", (req, res) => {
+  res.send("hello");
+});
 
 app.use("/api/auth", authRouter);
 app.use("/api/users", usersRouter);
@@ -42,14 +42,7 @@ app.use("/api/pets", petsRouter);
 app.use("/api/species", speciesRouter);
 app.use("/api/reminders", remindersRouter);
 
-//static files
-app.get("*/assets/:filename", (req, res) => {
-  res.sendFile(path.join(__dirname, `./dist/assets/${req.params.filename}`));
-});
-app.use(express.static(path.join(__dirname, "./dist/"))); // react
-
 app.use("/api/*", error); // handle /api/ errors
-app.use("*", express.static(path.join(__dirname, "./dist"))); // fall backs to react-router
 
 app.listen(PORT, () => {
   console.log("Server running on port", PORT);
