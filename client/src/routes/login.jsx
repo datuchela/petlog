@@ -8,7 +8,6 @@ import Button from "../components/atoms/Button";
 import VerticalInput from "../components/molecules/VerticalInput";
 import Link from "../components/atoms/Link";
 
-//Page Component
 const LoginPage = () => {
   const { logIn, mutation } = useAuthenticate();
   const [form, handleChange] = useForm({ usernameOrEmail: "", password: "" });

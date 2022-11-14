@@ -10,7 +10,6 @@ import Button from "../components/atoms/Button";
 import VerticalInput from "../components/molecules/VerticalInput";
 import Link from "../components/atoms/Link";
 
-// Page Component
 const RegisterPage = () => {
   const navigate = useNavigate();
   const [form, handleChange] = useForm({
