@@ -1,3 +1,5 @@
+This repository has been divided into **_petlog-client_** and **_petlog-server_**, Will still push **major** updates to this one.
+
 # petLog
 
 A simple web app for tracking reminders exclusively for pets.
