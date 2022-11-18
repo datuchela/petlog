@@ -1,4 +1,4 @@
-This repository has been divided into **_petlog-client_** and **_petlog-server_**, Will still push **major** updates to this one.
+This repository has been divided into [**_petlog-client_**](https://github.com/datuchela/petlog-client) and [**_petlog-server_**](https://github.com/datuchela/petlog-server), for the most recent version of this project please checkout those repositories. <br/>Will still push **major** updates to this one.
 
 # petLog
 
