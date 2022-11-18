@@ -3,7 +3,7 @@ import { Link as RouterLink } from "react-router-dom";
 const Link = ({ children, to, className }) => {
   return (
     <RouterLink
-      className={`text-gray-600 hover:text-gray-800 font-medium ${className}`}
+      className={`text-blue-500 hover:text-blue-400 font-medium ${className}`}
       to={to}
     >
       {children}

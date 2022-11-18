@@ -74,5 +74,6 @@ model Pet {
 model Species {
   id Int @id @default(autoincrement())
   name String
+  emoji String?
   pets Pet[]
 }

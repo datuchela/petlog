@@ -27,7 +27,7 @@ const LoginPage = () => {
             name="usernameOrEmail"
             label="Username or Email"
             emoji="🧑🏻"
-            placeholder="example"
+            placeholder="username or email"
             value={form.usernameOrEmail}
             handleChange={handleChange}
           />

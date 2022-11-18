@@ -6,7 +6,7 @@ import { useEffect } from "react";
 import useForm from "../../hooks/useForm";
 import usePet from "../../hooks/usePet";
 import usePets from "../../hooks/usePets";
-import { getPets, getSpecies } from "../../api/methods";
+import { getSpecies } from "../../api/methods";
 
 // UI Components
 import Heading from "../../components/atoms/Heading";
@@ -17,7 +17,7 @@ import VerticalSelect from "../../components/molecules/VerticalSelect";
 
 const AddPetPage = () => {
   const navigate = useNavigate();
-  const { pets, isLoading: isPetsLoading } = usePets();
+  // const { pets, isLoading: isPetsLoading } = usePets();
   const [form, handleChange] = useForm({
     name: "",
     gender: "male",
@@ -25,9 +25,7 @@ const AddPetPage = () => {
     speciesId: "1",
   });
 
-  useEffect(() => {
-    console.log(pets);
-  }, [pets]);
+  const maxDateOfBirth = new Date().toISOString().split("T")[0]; // Gets the current date in yyyy-mm-dd format to validate birthdate
 
   const {
     isLoading: isSpeciesLoading,
@@ -38,25 +36,29 @@ const AddPetPage = () => {
     refetchOnWindowFocus: false,
   });
 
-  const emojiArray = ["🐕", "🐈", "🦅"];
-
   const { addPet } = usePet();
   const mutation = addPet();
-  const { isLoading, isError, data, mutate } = mutation;
+  const { isLoading, isError, isSuccess, data, mutate } = mutation;
+
+  useEffect(() => {
+    if (!isSuccess) return;
+    return navigate("/", { replace: true });
+  }, [isSuccess]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     mutate(form);
-    if (!isLoading && !isError) {
-      console.log(mutation);
-      console.log("isSuccess");
-      return navigate("/", { replace: true });
-    }
+    console.log("isSuccess: ", isSuccess);
   };
 
   return (
     <>
       <Heading>Let's get to know your pet</Heading>
+      {isError && (
+        <div className="font-semibold text-red-400 px-4 py-2 rounded-lg">
+          Whoops, Something went wrong.
+        </div>
+      )}
       <form className="flex flex-col gap-6" onSubmit={handleSubmit}>
         <div className="flex flex-col gap-6">
           <div className="flex items-center gap-6">
@@ -65,7 +67,7 @@ const AddPetPage = () => {
               name="name"
               label="name"
               emoji="🐰"
-              placeholder="Poppy"
+              placeholder="Roger"
               value={form.name}
               handleChange={handleChange}
             />
@@ -92,6 +94,7 @@ const AddPetPage = () => {
               placeholder="17/03/2018"
               value={form.birthday}
               handleChange={handleChange}
+              max={maxDateOfBirth}
             />
             <VerticalSelect
               name="speciesId"
@@ -102,7 +105,7 @@ const AddPetPage = () => {
               {speciesData?.species?.map((specie) => {
                 return (
                   <option key={specie.id} value={specie.id}>
-                    {emojiArray[specie.id - 1] + " " + specie.name}
+                    {specie.emoji + " " + specie.name}
                   </option>
                 );
               })}
@@ -123,14 +126,14 @@ const AddPetPage = () => {
           </div>
         </div>
       </form>
-      <div>
+      {/* <div>
         <div>Pets:</div>
         <div>
           {isPetsLoading
             ? "Loading..."
             : pets?.map((pet) => <div key={pet.id}>{pet.name}</div>)}
         </div>
-      </div>
+      </div> */}
     </>
   );
 };

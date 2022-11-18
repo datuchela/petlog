@@ -40,7 +40,7 @@ const RegisterPage = () => {
               name="username"
               label="Username"
               emoji="🧑🏻"
-              placeholder="example"
+              placeholder="username"
               value={form.username}
               handleChange={handleChange}
             />
@@ -49,7 +49,7 @@ const RegisterPage = () => {
               name="email"
               label="Email"
               emoji="📧"
-              placeholder="example@mail.com"
+              placeholder="email"
               value={form.email}
               handleChange={handleChange}
             />
@@ -60,7 +60,7 @@ const RegisterPage = () => {
               name="password"
               label="Password"
               emoji="🔑"
-              placeholder="*********"
+              placeholder="******"
               value={form.password}
               handleChange={handleChange}
             />
@@ -69,13 +69,21 @@ const RegisterPage = () => {
               name="repeatPassword"
               label="Repeat Password"
               emoji="🔑"
-              placeholder="*********"
+              placeholder="******"
               value={form.repeatPassword}
               handleChange={handleChange}
             />
           </div>
         </div>
         <div className="flex flex-col gap-4">
+          <div className="flex items-center gap-1 text-sm">
+            <span className="text-gray-600 font-medium">
+              By signing up, you agree to petLog's
+            </span>
+            <Link className={"text-blue-500 hover:text-blue-400"} to="/tos">
+              Terms of Service
+            </Link>
+          </div>
           <Button
             disabled={mutation.isLoading}
             type="submit"
