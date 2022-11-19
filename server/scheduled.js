@@ -8,6 +8,28 @@ const currentDateString = currentDate.toISOString().split("T")[0];
 
 const millisecondsInDay = 1000 * 60 * 60 * 24;
 
+// Finds if dates has current day, returns Reminders of that day, otherwise quits.
+const getReminders = async () => {
+  try {
+    const date = await db.date.findUnique({
+      where: {
+        date: currentDateString,
+      },
+      include: {
+        reminders: true,
+      },
+    });
+    if (!date) {
+      console.log("no dates");
+      process.exit(0);
+    }
+    return date;
+  } catch (error) {
+    console.error(error);
+    return error;
+  }
+};
+
 const intervalTypes = [
   {
     name: "day",
@@ -29,9 +51,6 @@ const intervalTypes = [
 
 const convertToMilliseconds = (intervalType, intervalValue) => {
   const nextValue = intervalValue * intervalTypes[intervalType].unit;
-  console.log(
-    `${intervalValue} ${intervalTypes[intervalType].name}(s) = ${nextValue} Milliseconds`
-  );
   return nextValue;
 };
 
@@ -44,30 +63,10 @@ const calculateUpcoming = (intervalType, intervalValue) => {
   return dateAfter;
 };
 
-const getReminders = async () => {
-  try {
-    const dates = await db.date.findUnique({
-      where: {
-        date: currentDateString,
-      },
-      include: {
-        reminders: true,
-      },
-    });
-    if (!dates) {
-      console.log("no dates");
-      process.exit(0);
-    }
-    return dates;
-  } catch (error) {
-    console.error(error);
-    return error;
-  }
-};
-
 const updateReminders = async () => {
   let remindersClone;
   const { date, reminders } = await getReminders();
+  console.log("date: ", date);
   remindersClone = [...reminders];
 
   remindersClone?.forEach(async (reminder) => {

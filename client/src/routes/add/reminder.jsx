@@ -26,6 +26,8 @@ const AddReminderPage = () => {
     petId: "",
   });
 
+  const minUpcomingDate = new Date().toISOString().split("T")[0]; // Gets the current date in yyyy-mm-dd format to validate upcoming date
+
   const { pets, isLoading: petsIsLoading } = usePets();
 
   useLayoutEffect(() => {
@@ -86,6 +88,7 @@ const AddReminderPage = () => {
               placeholder="17/03/2018"
               value={form.upcoming}
               handleChange={handleChange}
+              min={minUpcomingDate}
             />
             <div className="flex flex-col gap-2">
               <Label>Interval</Label>
@@ -95,7 +98,7 @@ const AddReminderPage = () => {
                   name="intervalValue"
                   label="interval value"
                   emoji="⏱"
-                  placeholder="5 day(s)"
+                  placeholder="interval"
                   wrapperStyle="w-full h-full rounded-none border-none"
                   value={form.intervalValue}
                   handleChange={handleChange}
