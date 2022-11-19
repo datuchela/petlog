@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
 //Custom Hooks
@@ -10,22 +11,26 @@ import Button from "../../components/atoms/Button";
 
 const PetPage = () => {
   const { petId } = useParams();
+  const navigate = useNavigate();
 
   // usePet hooks
   const { getPet, deletePet } = usePet();
   const { isLoading, isError, error, data } = getPet(petId);
-  const { mutate, isSuccess } = deletePet();
+  const { mutate, isLoading: isDeleteLoading, isSuccess } = deletePet();
 
   // useReminder hooks
   const { deleteReminder } = useReminder();
   const { mutate: deleteReminderMutate, isLoading: isDeleteReminderLoading } =
     deleteReminder();
 
-  const navigate = useNavigate();
+  // Navigates on main page after success
+  useEffect(() => {
+    if (!isSuccess) return;
+    return navigate("/", { replace: true });
+  }, [isSuccess]);
 
   const handleDeletePet = async () => {
     mutate(petId);
-    return navigate("/", { replace: true });
   };
 
   const handleDeleteReminder = async (reminderId) => {
@@ -63,7 +68,9 @@ const PetPage = () => {
               </div>
             ))}
           </div>
-          <Button onClick={handleDeletePet}>Delete Pet</Button>
+          <Button disabled={isDeleteLoading} onClick={handleDeletePet}>
+            Delete Pet
+          </Button>
         </div>
       )}
     </div>

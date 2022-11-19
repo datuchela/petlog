@@ -1,4 +1,4 @@
-import { useLayoutEffect } from "react";
+import { useLayoutEffect, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
 // custom hooks
@@ -33,16 +33,16 @@ const AddReminderPage = () => {
   }, [pets]);
 
   const { addReminder } = useReminder();
+  const { isLoading, isError, isSuccess, mutate } = addReminder();
 
-  const { isLoading, isError, data, mutate } = addReminder();
+  useEffect(() => {
+    if (!isSuccess) return;
+    return navigate(`/pet/${form.petId}`, { replace: true });
+  }, [isSuccess]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     mutate(form);
-    if (!isLoading && !isError) {
-      console.log("isSuccess");
-      return navigate("/", { replace: true });
-    }
   };
 
   return (
