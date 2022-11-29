@@ -4,6 +4,7 @@ import usePets from "../hooks/usePets";
 // UI Components
 import Link from "../components/atoms/Link";
 import Heading from "../components/atoms/Heading";
+import DialogModal from "../components/atoms/DialogModal";
 
 const HomePage = () => {
   const { auth } = useAuth();
