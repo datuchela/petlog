@@ -1,0 +1,6 @@
+version: "2.12.2"
+services:
+  db:
+    image: mysql
+    environment:
+      DATABASE_URL: mysql://root:Kadrikur%2342069@localhost:3306/petlog
