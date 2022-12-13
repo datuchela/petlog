@@ -1,7 +1,12 @@
-const { db } = require("../db");
-const asyncWrapper = require("../middleware/asyncWrapper");
+import { prisma } from "../prisma";
+import asyncWrapper from "../middleware/asyncWrapper";
+import type { Request, Response } from "express";
 
-const addPet = asyncWrapper(async (req, res) => {
+interface RequestWithUserId extends Request {
+  userId: string;
+}
+
+export const addPet = asyncWrapper(async (req: RequestWithUserId, res: Response) => {
   const userId = req.userId;
   const { name, gender, birthday, weight, speciesId } = req.body;
   if (!req.body || !name || !gender || !birthday || !speciesId) {
@@ -11,25 +16,25 @@ const addPet = asyncWrapper(async (req, res) => {
   const capitalizedName = name.charAt(0).toUpperCase() + name.slice(1); // capitalize name
 
   // creates a pet in db
-  const pet = await db.pet.create({
+  const pet = await prisma.pet.create({
     data: {
       name: capitalizedName,
       gender: gender,
       birthday: birthday,
       // weight: weight,
       speciesId: parseInt(speciesId),
-      ownerId: userId,
+      ownerId: parseInt(userId),
     },
   });
 
   return res.status(201).json({ pet: pet });
 });
 
-const getPet = asyncWrapper(async (req, res) => {
+export const getPet = asyncWrapper(async (req: RequestWithUserId, res: Response) => {
   const petId = parseInt(req.params.petId);
   const userId = parseInt(req.userId);
   try {
-    const pet = await db.pet.findFirst({
+    const pet = await prisma.pet.findFirst({
       where: {
         id: petId,
         ownerId: userId,
@@ -48,10 +53,10 @@ const getPet = asyncWrapper(async (req, res) => {
   }
 });
 
-const getPets = asyncWrapper(async (req, res) => {
+export const getPets = asyncWrapper(async (req: RequestWithUserId, res: Response) => {
   const userId = parseInt(req.userId);
   try {
-    const pets = await db.pet.findMany({
+    const pets = await prisma.pet.findMany({
       where: {
         ownerId: userId,
       },
@@ -69,12 +74,12 @@ const getPets = asyncWrapper(async (req, res) => {
   }
 });
 
-const deletePet = asyncWrapper(async (req, res) => {
+export const deletePet = asyncWrapper(async (req: RequestWithUserId, res: Response) => {
   const petId = parseInt(req.params.petId);
   const userId = parseInt(req.userId);
 
   try {
-    const pet = await db.pet.findFirst({
+    const pet = await prisma.pet.findFirst({
       where: {
         id: petId,
         ownerId: userId,
@@ -86,7 +91,7 @@ const deletePet = asyncWrapper(async (req, res) => {
         msg: "Pet not found or you are not authorized",
       });
 
-    await db.pet.delete({
+    await prisma.pet.delete({
       where: {
         id: petId,
       },
@@ -100,5 +105,3 @@ const deletePet = asyncWrapper(async (req, res) => {
     return res.status(500).json({ msg: "Something went wrong with db" });
   }
 });
-
-module.exports = { addPet, getPet, getPets, deletePet };

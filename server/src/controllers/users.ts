@@ -1,25 +1,19 @@
-const { db } = require("../db");
-const bcrypt = require("bcrypt");
-const asyncWrapper = require("../middleware/asyncWrapper");
-const {
-  generateAccessToken,
-  generateRefreshToken,
-} = require("../utils/generateToken");
+import type { Request, Response } from "express";
+import bcrypt from "bcrypt";
+import { prisma } from "../prisma";
+import asyncWrapper from "../middleware/asyncWrapper";
 
-const addUser = asyncWrapper(async (req, res) => {
-  if (
-    !req.body ||
-    !req.body.username ||
-    !req.body.email ||
-    !req.body.password
-  ) {
+import { generateAccessToken, generateRefreshToken } from "../utils/generateToken";
+
+export const addUser = asyncWrapper(async (req: Request, res: Response) => {
+  if (!req.body || !req.body.username || !req.body.email || !req.body.password) {
     return res.status(400).json({ msg: "Some values are empty." });
   }
 
   const hashedPassword = await bcrypt.hash(req.body.password, 10);
 
   // creates a user in db
-  const user = await db.user.create({
+  const user = await prisma.user.create({
     data: {
       username: req.body.username,
       email: req.body.email,
@@ -37,7 +31,7 @@ const addUser = asyncWrapper(async (req, res) => {
     username: user.username,
   });
 
-  await db.refreshToken.create({
+  await prisma.refreshToken.create({
     data: {
       token: refreshToken,
       userId: user.id,
@@ -60,10 +54,10 @@ const addUser = asyncWrapper(async (req, res) => {
   });
 });
 
-const getUser = asyncWrapper(async (req, res) => {
+export const getUser = asyncWrapper(async (req: Request, res: Response) => {
   const userId = req.userId;
   try {
-    const user = await db.user.findUnique({
+    const user = await prisma.user.findUnique({
       where: {
         id: userId,
       },
@@ -83,10 +77,6 @@ const getUser = asyncWrapper(async (req, res) => {
     });
   } catch (err) {
     console.log(err);
-    return res
-      .status(500)
-      .json({ msg: "Something went wrong when retrieving data" });
+    return res.status(500).json({ msg: "Something went wrong when retrieving data" });
   }
 });
-
-module.exports = { getUser, addUser };

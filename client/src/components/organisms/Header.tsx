@@ -13,10 +13,8 @@ const Header = () => {
       <Link to="/" className="p-2">
         <img className="h-8" src={imgUrl} />
       </Link>
-      {/* <div className="flex items-center gap-4"> */}
       <NavLinks />
       {auth?.user && <UserPanel />}
-      {/* </div> */}
     </header>
   );
 };

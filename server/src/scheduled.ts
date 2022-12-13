@@ -1,4 +1,4 @@
-const { db } = require("./db");
+import { prisma } from "./prisma";
 
 const currentDateInMilliseconds = new Date().getTime();
 
@@ -11,7 +11,7 @@ const millisecondsInDay = 1000 * 60 * 60 * 24;
 // Finds if dates has current day, returns Reminders of that day, otherwise quits.
 const getReminders = async () => {
   try {
-    const date = await db.date.findUnique({
+    const date = await prisma.date.findUnique({
       where: {
         date: currentDateString,
       },
@@ -57,9 +57,7 @@ const convertToMilliseconds = (intervalType, intervalValue) => {
 const calculateUpcoming = (intervalType, intervalValue) => {
   const interval = convertToMilliseconds(intervalType, intervalValue);
   const nextDateInMilliseconds = currentDateInMilliseconds + interval;
-  const dateAfter = new Date(nextDateInMilliseconds)
-    .toISOString()
-    .split("T")[0];
+  const dateAfter = new Date(nextDateInMilliseconds).toISOString().split("T")[0];
   return dateAfter;
 };
 
@@ -70,12 +68,9 @@ const updateReminders = async () => {
   remindersClone = [...reminders];
 
   remindersClone?.forEach(async (reminder) => {
-    const newDate = calculateUpcoming(
-      reminder.intervalType,
-      reminder.intervalValue
-    );
+    const newDate = calculateUpcoming(reminder.intervalType, reminder.intervalValue);
     try {
-      await db.date.upsert({
+      await prisma.date.upsert({
         where: {
           date: newDate,
         },
@@ -91,7 +86,7 @@ const updateReminders = async () => {
       return error;
     }
     try {
-      await db.reminder.update({
+      await prisma.reminder.update({
         where: {
           id: reminder.id,
         },

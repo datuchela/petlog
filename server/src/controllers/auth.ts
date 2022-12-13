@@ -1,15 +1,17 @@
-const bcrypt = require("bcrypt");
-const jwt = require("jsonwebtoken");
-const cookie = require("cookie");
-const { db } = require("../db");
+import type { Request, Response } from "express";
+import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
+import cookie from "cookie";
+import { prisma } from "../prisma";
 
-const asyncWrapper = require("../middleware/asyncWrapper");
-const {
-  generateAccessToken,
-  generateRefreshToken,
-} = require("../utils/generateToken");
+import asyncWrapper from "../middleware/asyncWrapper";
+import { generateAccessToken, generateRefreshToken } from "../utils/generateToken";
 
-const authenticate = asyncWrapper(async (req, res) => {
+interface ExtendedJwtPayload extends JwtPayload {
+  id: number;
+}
+
+export const authenticate = asyncWrapper(async (req: Request, res: Response) => {
   if (!req.body || !req.body.usernameOrEmail || !req.body.password) {
     console.log(req.body);
     return res.status(400).json({ msg: "Some values are empty." });
@@ -17,7 +19,7 @@ const authenticate = asyncWrapper(async (req, res) => {
 
   // finds an user in db with username or email
   const user =
-    (await db.user.findUnique({
+    (await prisma.user.findUnique({
       where: {
         username: req.body.usernameOrEmail,
       },
@@ -26,7 +28,7 @@ const authenticate = asyncWrapper(async (req, res) => {
         reminders: false,
       },
     })) ||
-    (await db.user.findUnique({
+    (await prisma.user.findUnique({
       where: {
         email: req.body.usernameOrEmail,
       },
@@ -54,14 +56,14 @@ const authenticate = asyncWrapper(async (req, res) => {
     username: user.username,
   });
 
-  await db.refreshToken.create({
+  await prisma.refreshToken.create({
     data: {
       token: refreshToken,
       userId: user.id,
     },
   });
 
-  const { password, pets, reminders, ...userWithoutPassword } = user;
+  const { password, ...userWithoutPassword } = user;
 
   res.cookie("refreshToken", refreshToken, {
     httpOnly: true,
@@ -73,19 +75,17 @@ const authenticate = asyncWrapper(async (req, res) => {
 
   return res.status(200).json({
     user: userWithoutPassword,
-    pets: pets,
-    reminders: reminders,
     accessToken: accessToken,
   });
 });
 
-const refreshToken = asyncWrapper(async (req, res) => {
+export const refreshToken = asyncWrapper(async (req: Request, res: Response) => {
   if (!req.headers.cookie) {
     return res.status(400).json({ msg: "Must provide refresh token" });
   }
   const { refreshToken } = cookie.parse(req.headers.cookie);
 
-  const validRefreshToken = await db.refreshToken.findUnique({
+  const validRefreshToken = await prisma.refreshToken.findUnique({
     where: {
       token: refreshToken,
     },
@@ -95,33 +95,35 @@ const refreshToken = asyncWrapper(async (req, res) => {
     return res.status(400).json({ msg: "invalid refresh token" });
   }
   try {
+    if (!process.env.REFRESH_TOKEN_SECRET)
+      return res.status(500).json({ msg: "Something went wrong on the server" });
     const user = jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET);
-    const userFromDatabase = await db.user.findUnique({
+    const userFromDatabase = await prisma.user.findUnique({
       where: { id: user.id },
       include: {
         pets: false,
         reminders: false,
       },
     });
-    const { password, pets, reminders, ...userWithoutPassword } =
-      userFromDatabase;
+
+    if (!userFromDatabase) return res.status(404).json({ msg: "User not found" });
+
+    const { password, ...userWithoutPassword } = userFromDatabase;
 
     const accessToken = generateAccessToken({
-      id: userFromDatabase.id,
-      username: userFromDatabase.username,
+      id: userFromDatabase?.id,
+      username: userFromDatabase?.username,
     });
 
     return res.status(200).json({
       user: userWithoutPassword,
-      pets: pets,
-      reminders: reminders,
       accessToken: accessToken,
     });
 
     // handle errors
-  } catch (error) {
+  } catch (error: any) {
     console.error(error);
-    await db.refreshToken.delete({
+    await prisma.refreshToken.delete({
       where: {
         token: refreshToken,
       },
@@ -131,25 +133,21 @@ const refreshToken = asyncWrapper(async (req, res) => {
   }
 });
 
-const logOut = asyncWrapper(async (req, res) => {
+export const logOut = asyncWrapper(async (req: Request, res: Response) => {
   if (!req.headers.cookie) {
-    return res
-      .status(401)
-      .json({ msg: "Must provide refresh token to logout" });
+    return res.status(401).json({ msg: "Must provide refresh token to logout" });
   }
   const { refreshToken } = cookie.parse(req.headers.cookie);
   try {
-    await db.refreshToken.delete({
+    await prisma.refreshToken.delete({
       where: {
         token: refreshToken,
       },
     });
     res.clearCookie("refreshToken");
     return res.status(200).json({ msg: "logged out" });
-  } catch (error) {
+  } catch (error: any) {
     console.log(error.message);
     return res.status(500).json({ msg: "Something went wrong on the server." });
   }
 });
-
-module.exports = { authenticate, refreshToken, logOut };

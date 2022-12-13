@@ -1,7 +1,8 @@
-const { db } = require("../db");
-const asyncWrapper = require("../middleware/asyncWrapper");
+import { prisma } from "../prisma";
+import asyncWrapper from "../middleware/asyncWrapper";
+import type { Request, Response } from "express";
 
-const addReminder = asyncWrapper(async (req, res) => {
+export const addReminder = asyncWrapper(async (req: Request, res: Response) => {
   if (
     !req.body ||
     !req.body.petId ||
@@ -15,7 +16,7 @@ const addReminder = asyncWrapper(async (req, res) => {
   }
   const userId = req.userId;
   try {
-    const pet = await db.pet.findFirst({
+    const pet = await prisma.pet.findFirst({
       where: {
         ownerId: userId,
         id: parseInt(req.body.petId),
@@ -24,7 +25,7 @@ const addReminder = asyncWrapper(async (req, res) => {
     if (!pet) return res.status(404).json({ msg: "Not found" });
 
     try {
-      const date = await db.date.upsert({
+      const date = await prisma.date.upsert({
         where: {
           date: req.body.upcoming,
         },
@@ -41,7 +42,7 @@ const addReminder = asyncWrapper(async (req, res) => {
       return res.status(500).json({ msg: "Error creating date" });
     }
 
-    const reminder = await db.reminder.create({
+    const reminder = await prisma.reminder.create({
       data: {
         name: req.body.name,
         upcoming: req.body.upcoming,
@@ -58,11 +59,11 @@ const addReminder = asyncWrapper(async (req, res) => {
   }
 });
 
-const deleteReminder = asyncWrapper(async (req, res) => {
+export const deleteReminder = asyncWrapper(async (req: Request, res: Response) => {
   const userId = parseInt(req.userId);
   const reminderId = parseInt(req.params.reminderId);
   try {
-    const reminder = await db.reminder.findFirst({
+    const reminder = await prisma.reminder.findFirst({
       where: {
         id: reminderId,
         userId: userId,
@@ -74,15 +75,13 @@ const deleteReminder = asyncWrapper(async (req, res) => {
         msg: "Reminder not found or you are not authorized",
       });
 
-    await db.reminder.delete({
+    await prisma.reminder.delete({
       where: {
         id: reminderId,
       },
     });
 
-    return res
-      .status(200)
-      .json({ msg: "Reminder has been deleted successfully." });
+    return res.status(200).json({ msg: "Reminder has been deleted successfully." });
   } catch (error) {
     console.log(error);
     return res.status(500).json({ msg: "Something went wrong with db" });

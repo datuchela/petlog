@@ -1,9 +1,10 @@
-const { db } = require("../db");
-const asyncWrapper = require("../middleware/asyncWrapper");
+import { prisma } from "../prisma";
+import asyncWrapper from "../middleware/asyncWrapper";
+import type { Request, Response } from "express";
 
-const getSpecies = asyncWrapper(async (req, res) => {
+export const getSpecies = asyncWrapper(async (req: Request, res: Response) => {
   try {
-    const species = await db.species.findMany();
+    const species = await prisma.species.findMany();
     if (!species) return res.status(404).json({ msg: "No species found" });
     return res.status(200).json({ species: species });
   } catch (error) {
@@ -12,11 +13,10 @@ const getSpecies = asyncWrapper(async (req, res) => {
   }
 });
 
-const addSpecies = asyncWrapper(async (req, res) => {
-  if (!req.body.name)
-    return res.status(400).json({ msg: "No name provided for species" });
+export const addSpecies = asyncWrapper(async (req: Request, res: Response) => {
+  if (!req.body.name) return res.status(400).json({ msg: "No name provided for species" });
   try {
-    const species = await db.species.create({
+    const species = await prisma.species.create({
       data: {
         name: req.body.name,
       },
